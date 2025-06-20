@@ -1,0 +1,206 @@
+<?php 
+$accion=isset($_GET["accion"]) ? $_GET["accion"] : '' ;
+$analisisseleccionado=isset($_GET["a"]) ? $_GET["a"] : null ;
+$id=isset($_GET["id"]) ? $_GET["id"] : '' ;
+$doctor = isset($_GET["doctor"]) ? $_GET["doctor"] : '' ;
+$doctor1 = isset($_GET["doctor1"]) ? $_GET["doctor1"] : '' ;
+$boton = isset($_GET["volver"]) ? $_GET["volver"] : '' ;
+$preciof= isset($_GET["precio"]) ? $_GET["precio"] : '' ;
+$muestra=isset($_GET["muestra"]) ? $_GET["muestra"] : null ;
+$diagnostico=isset($_GET["diagnostico"]) ? $_GET["diagnostico"] : '' ;
+$pago=isset($_GET["pago"]) ? $_GET["pago"] : '' ;
+
+echo '<form action="index.php" name="form" method="GET"><table border="3">';
+if ($accion=='nuevo'){
+	if ($id!=''){
+		$datos=$base->llenardatospaciente($id);
+		if (count($datos)==0){
+			 $accion='';
+		}
+	}
+	else {
+	 $accion='';
+	}
+}
+else {
+	$accion=='';
+}
+if ($boton=='volver'){
+	$accion='nuevo';
+}
+switch ($accion){
+	case '': echo '<tr><td>Introducir id paciente</td><td><input type="text" name="id"></td></tr><tr>'; $accionenv='nuevo'; break;
+	case 'nuevo': 	
+					$accionenv='guardar';  $iddoctores=$base->listadoctor(); 
+
+					$datospaciente=$base->llenardatospaciente($id);
+					// aqui se llena el id del paciente;
+					$selectpacientes='<tr><td colspan="3">Paciente</td><td colspan="3">'.$datospaciente[0]['nombres'].' '.$datospaciente[0]['apellidos'].'<input type="hidden" name="id" value="'.$datospaciente[0]['id'].'"></td></tr>';
+					// select del doctor
+					$selectpacientes=$selectpacientes.'<tr><td colspan="3">Diagnostico presuntivo</td><td colspan="3"><input name="diagnostico" value="'.$diagnostico.'"></td></tr>';
+					$selectdoctor='<tr><td colspan="3">Nombre del Doctor:</td><td colspan="3"><SELECT NAME="doctor" SIZE=1"><option value=""></option>';
+					for ($i=0; $i<sizeof($iddoctores); $i++){
+						if ($iddoctores[$i]['data']==$doctor){
+							$selectdoctor=$selectdoctor.'<OPTION VALUE="'.$iddoctores[$i]['data'].'" selected>'.$iddoctores[$i]['label'].'</OPTION>';
+						}
+						else{}
+							$selectdoctor=$selectdoctor.'<OPTION VALUE="'.$iddoctores[$i]['data'].'">'.$iddoctores[$i]['label'].'</OPTION>';
+						}
+					$selectdoctor=$selectdoctor.'</SELECT> <input type="text" name="doctor1" /> </td></tr>';
+					$analisis=$base->checkanalisis();
+					$checkanalisis='';
+					$o=0;
+					for ($i=0; $i<sizeof($analisis); $i++){
+						if ($i==0){
+							$checkanalisis=$checkanalisis.'<tr><th colspan="6">'.$analisis[$i]['nombrec'].'</th></tr>';
+						}
+						else {
+							if($analisis[$i]['nombrec']!=$analisis[$i-1]['nombrec']){
+								$o=0;								
+								$checkanalisis=$checkanalisis.'<tr><th colspan="6">'.$analisis[$i]['nombrec'].'</th></tr>';
+							}
+						}
+						if ($analisis[$i]['idanalisis']==null){
+							$band=true;
+							for ($a=0; $a<sizeof($analisisseleccionado); $a++){
+								if ($analisis[$i]['id']==$analisisseleccionado[$a]){
+									$checkanalisis=$checkanalisis.'<td width="35"><input type="checkbox" name="a[]" value="'.$analisis[$i]['id'].'" checked>'.$analisis[$i]['nombrea'].'</td>';
+									$band=false;
+								}
+							}
+							if ($band) {
+									$checkanalisis=$checkanalisis.'<td width="35"><input type="checkbox" name="a[]" value="'.$analisis[$i]['id'].'">'.$analisis[$i]['nombrea'].'</td>';
+								}
+								else {
+									$band=false;
+								}
+							$o++;
+							if ($o==6){
+								$checkanalisis=$checkanalisis.'</tr>';
+								$o=0;
+							}
+						}
+					}
+					echo $selectpacientes; echo $selectdoctor; echo $checkanalisis; $accionenv='guardar'; break;
+	case 'guardar': $accionenv='editar'; 
+					$analisis=$base->checkanalisis();
+					$datospaciente=$base->llenardatospaciente($id);
+					$iddoctores=$base->listadoctor();
+					if ($doctor1==''){
+						if ($doctor!=''){
+							for ($i=0;$i<count($iddoctores);$i++){
+								if ($iddoctores[$i]['data']==$doctor){
+									$iddoctor[0]=$iddoctores[$i]['data'];
+									$iddoctor[1]=$iddoctores[$i]['label'];
+								}
+							}	
+						}
+					}
+					else {
+						$base->nuevodoctor($doctor1);
+						$doctornuevo=$base->seleccionardoctor($doctor1);			
+						$iddoctor[0]=$doctornuevo[0]['id'];
+						$iddoctor[1]=$doctornuevo[0]['nombre'];
+					}
+					echo '<tr><td colspan="2">se va a crear esta atencion esta deacuerdo?</td></tr><tr>
+							<td rowspan=2>Paciente</td><td>nombre:'.$datospaciente[0]['nombres'].' '.$datospaciente[0]['apellidos'].'</td></tr>
+							<tr><td>ID del paciente: '.$datospaciente[0]['id'].'<input type="hidden" name="id" value="'.$datospaciente[0]['id'].'"></td></tr>
+							<tr><td>diagnostico presuntivo</td><td>'.$diagnostico.'<input type="hidden" name="diagnostico" value="'.$diagnostico.'"></td><tr>
+							<tr><td>doctor</td><td>'.$iddoctor[1].'<input type="hidden" name="doctor" value="'.$iddoctor[0].'"></td></tr><tr><td><tr><th>id analisis</th><th>Nombre analisis</th></tr>';
+					$precio=0;
+					$muestras='';
+					$arr=null;
+					$se=true;
+					for ($i=0; $i< count($analisisseleccionado); $i++){		
+						$b= $base->selectw('nombre','analisisespecifico','id='.$analisisseleccionado[$i]);
+						for ($cue=0 ; $cue< count ($analisis); $cue++){
+							if ($analisis[$cue]['nombrea']==$b[0]['nombre']){
+								echo $mues=$base->selectw1('idtipomuestra, nombre','tiporesultado','idanalisis='.$analisis[$cue]['id'].' group by idtipomuestra');
+								/*if ($arr==null){
+								$arr[]=$analisis[$cue]['idtipomuestra'];
+									$muestras=$muestras.'<tr><td>muestra requerida</td><td><input type="checkbox" checked name="muestra[]" value="'.$analisis[$cue]['idtipomuestra'].'">'.$analisis[$cue]['muestra'].'</td><tr>';
+								}
+								for ($u=0; $u<count($arr); $u++){
+									if ($arr[$u]==$analisis[$cue]['idtipomuestra']){
+										$se=false;
+									}
+								}
+								if ($se){
+										$muestras=$muestras.'<tr><td>muestra requerida</td><td><input type="checkbox" checked name="muestra[]" value="'.$analisis[$cue]['idtipomuestra'].'">'.$analisis[$cue]['muestra'].'</td><tr>';
+										$arr[]=$analisis[$cue]['idtipomuestra'];
+								}
+								$se=true;*/
+							}
+						}
+						echo '<tr><td>'.$analisisseleccionado[$i].'</td><td>'.$b[0]['nombre'].'<input type="checkbox" checked name="a[]" value="'.$analisisseleccionado[$i].'"></td></tr>';
+						$p=$base->precio($analisisseleccionado[$i]);
+						$precio=$precio+$p[0]['precio'];
+					}
+					echo $muestras;
+					echo '<tr><td>precio</td><td>'.$precio.'</td><input type="hidden" name="precio" value="'.$precio.'"></td></tr>';
+					echo '<tr><td>pago</td><td><input name="pago" value="0"></td></tr>';
+					break;
+	case 'editar': 	$base->agregaratencion($doctor, $id,$diagnostico, $muestra, $analisisseleccionado, $pago, $preciof );
+					$idsol=$base->ultimasolicitud();
+					$carnet='<tr><td>Se registro correctamente</td><td><a href="reportes/atencion.php?idsol='.$idsol.'" target="_blank">Imprimir atencion</a></td></tr>';			
+					echo $carnet;
+/*
+					$accionenv='editar2';  $iddoctores=$base->listadoctor(); 
+					
+					$datospaciente=$base->llenardatospaciente($id);
+					// aqui se llena el id del paciente;
+					$selectpacientes='<tr><td colspan="3">Paciente</td><td colspan="3">'.$datospaciente[0]['nombres'].' '.$datospaciente[0]['apellidos'].'<input type="hidden" name="id" value="'.$datospaciente[0]['id'].'"></td></tr>';
+					// select del doctor
+					$selectpacientes=$selectpacientes.'<tr><td colspan="3">Diagnostico presuntivo</td><td colspan="3"><input name="diagnostico" value="'.$diagnostico.'"></td></tr>';
+					$selectdoctor='<tr><td colspan="3">Nombre del Doctor:</td><td colspan="3"><SELECT NAME="doctor" SIZE=1"><option value=""></option>';
+					for ($i=0; $i<sizeof($iddoctores); $i++){
+						if ($iddoctores[$i]['data']==$doctor){
+							$selectdoctor=$selectdoctor.'<OPTION VALUE="'.$iddoctores[$i]['data'].'" selected>'.$iddoctores[$i]['label'].'</OPTION>';
+						}
+						else{}
+							$selectdoctor=$selectdoctor.'<OPTION VALUE="'.$iddoctores[$i]['data'].'">'.$iddoctores[$i]['label'].'</OPTION>';
+						}
+					$selectdoctor=$selectdoctor.'</SELECT> <input type="text" name="doctor1" /> </td></tr>';
+					$analisis=$base->checkanalisis();
+					$checkanalisis='';
+					$o=0;
+					for ($i=0; $i<sizeof($analisis); $i++){
+						if ($i==0){
+							$checkanalisis=$checkanalisis.'<tr><th colspan="6">'.$analisis[$i]['nombrec'].'</th></tr>';
+						}
+						else {
+							if($analisis[$i]['nombrec']!=$analisis[$i-1]['nombrec']){
+								$o=0;								
+								$checkanalisis=$checkanalisis.'<tr><th colspan="6">'.$analisis[$i]['nombrec'].'</th></tr>';
+							}
+						}
+						$band=true;
+						for ($a=0; $a<sizeof($analisisseleccionado); $a++){
+							$e = explode("-", $analisisseleccionado[$a]);
+							if ($analisis[$i]['id']==$e[0]){
+								$checkanalisis=$checkanalisis.'<td width="35"><input type="checkbox" name="a[]" value="'.$analisis[$i]['id'].'-'.$analisis[$i]['nombrea'].'" checked>'.$analisis[$i]['nombrea'].'</td>';
+								$band=false;
+							}
+						}
+						if ($band) {
+								$checkanalisis=$checkanalisis.'<td width="35"><input type="checkbox" name="a[]" value="'.$analisis[$i]['id'].'-'.$analisis[$i]['nombrea'].'">'.$analisis[$i]['nombrea'].'</td>';
+							}
+							else {
+								$band=false;
+							}
+						$o++;
+						if ($o==6){
+							$checkanalisis=$checkanalisis.'</tr>';
+							$o=0;
+						}
+					}
+					echo $selectpacientes; echo $selectdoctor; echo $checkanalisis; $accionenv='guardar'; break;
+					$accionenv='guardar'; echo '';*/ break;
+	case 'editar2':			
+}
+if ($accion!='editar'){
+echo '<tr><td cospan="2"><input type="hidden" name="ver" value="atencion"/><input type="hidden" name="accion" value="'.$accionenv.'"/><input type="submit" value="guardar"/></td><td><input name="volver" type="submit" name="boton" value="volver"></td></tr>
+';
+}
+echo '</table></form>';
+?>

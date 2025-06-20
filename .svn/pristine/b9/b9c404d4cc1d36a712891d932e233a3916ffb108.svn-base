@@ -1,0 +1,34 @@
+
+$(function() {
+$('.hola').hide();
+$('.hola').attr("value",false);
+$(".detalles").click(function() {
+	if ($('.hola#'+$(this).attr("id")).attr("value")){		
+		$('.hola#'+$(this).attr("id")).hide();
+		$('.hola#'+$(this).attr("id")).attr("value",false);
+	}
+	else {
+	$('.hola').attr("value",false);
+	$('.hola').hide();
+	
+		$('.hola#'+$(this).attr("id")).show();
+		$('.hola#'+$(this).attr("id")).attr("value",true);
+		punto='.hola#'+$(this).attr("id");
+		//$('.hola#'+$(this).attr("id")).html("guey");
+		tabla="verdetalles";
+		inputString=$('.dato#'+$(this).attr("id")).attr("value");
+		elegido="id";
+		$.post("php/motorjs.php", {buscar: inputString ,funcion:tabla, modo: elegido}, function(data){
+		if(data.length >0) {
+			$(punto).html("<td>"+data+"</td>");
+		} else {
+			$(punto).html("vacio");
+		}
+		
+		});
+	}
+	
+	return false;
+	})
+}
+);

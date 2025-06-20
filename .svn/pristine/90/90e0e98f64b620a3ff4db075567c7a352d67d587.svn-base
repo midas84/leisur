@@ -1,0 +1,33 @@
+<?php
+class admresultados extends bdlaboratorio
+{
+    public $contenido;
+    function whoiam($accion)
+    {
+        $ver = isset($_GET["ver"]) ? $_GET["ver"] : '';
+        return '<input type="hidden" name="ver" value="' . $ver .
+            '" ><input type="hidden" name="accion" value="' . $accion . '" >';
+    }
+    function defaul(){
+        $this->contenido .= '<h2>Llenar resultados</h2><form action="index.php" name="form" method="GET"><table border="3"><tr>
+        <td>Introducir id de atencion</td>
+        <td><input type="text" name="idatencion"></td></tr>
+        <tr>'.$this->whoiam('nuevo').'</table></form>'; 
+    }
+    
+
+}
+
+
+
+header('Content-type: text/html; charset=iso-8859-1');
+$resultados = new admresultados();
+$resultados->contenido =
+    '<div id="content" align="center"><div class="contactof">';
+
+$accion = isset($_GET["accion"]) ? $_GET["accion"] : 'defaul';
+$resultados->$accion();
+$resultados->contenido .= '</div><div><br /></div>';
+echo $resultados->contenido;
+
+?>

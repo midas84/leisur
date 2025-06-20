@@ -1,0 +1,64 @@
+<?php
+class admautorizar extends bdlaboratorio
+{
+    public $contenido;
+    function whoiam($accion)
+    {
+        $ver = isset($_GET["ver"]) ? $_GET["ver"] : '';
+        return '<input type="hidden" name="ver" value="' . $ver .
+            '" ><input type="hidden" name="accion" value="' . $accion . '" >';
+    }
+    function defaul()
+    {
+        $this->contenido .= '<h2>Lista de resultados llenos por autorizar</h2>
+        <table>
+            <thead>
+                <tr><th>No.</th><th>accion</th><th>N&uacute;mero atenci&oacute;n</th><th>Nombre Paciente</th>
+                <th>Fecha de creaci&oacute;n</th></tr>
+            </thead>
+            <tbody>';
+        $this->mostrarresultados();
+        $this->contenido .= '</tbody>
+        </table>';
+    }
+    function mostrarresultados()
+    {
+        $listaresultados = $this->selectw('*', 'solicitud',
+            'autorizado=false and estado=true');
+        $no = 0;
+        foreach ($listaresultados as $resultado) {
+		$persona=$this->selectw('*','paciente','id='.$resultado['idpaciente']);
+            $this->contenido .= '<tr><td>' . $no++ . '</td>
+			<td><form name="i'.$no.'" method="POST" >
+			'.$this->whoiam('autorizar2').'
+			<input type="hidden" class="dato" id="b'.$no.'" name="idatencion" value="'.$resultado['id'].'">
+			<input class="detalles" id="b'.$no.'" type="submit" value="detalles" /></td>
+			<td>' . $resultado['id'] .'</td><td>'.$persona[0]['nombres'].' '.$persona[0]['apellidos'].'</td>
+                <td>' . $resultado['fechacreacion'] .'</td>
+                </tr><tr class="hola" id="b'.$no.'" value="true" ><td>hola</td></tr>';
+        }
+    }
+    function autorizar2(){
+        $this->autorizar($_GET['idatencion']);
+        $this->contenido.='Se autorizo correctamente la atenci&oacute;n No.'. $_GET['idatencion'].'</br>';
+        $this->defaul();
+         
+    }
+    
+    function editar(){
+        
+    }
+    function borrar(){
+        
+    }    
+}
+header('Content-type: text/html; charset=iso-8859-1');
+$autorizar = new admautorizar();
+$autorizar->contenido =
+    '<script type="text/javascript" src="js/detalles.js" ></script>
+	<div id="content" align="center"><div class="contactof">';
+
+$accion = isset($_GET["accion"]) ? $_GET["accion"] : 'defaul';
+$autorizar->$accion();
+$autorizar->contenido .= '</div><div><br /></div>';
+echo $autorizar->contenido;

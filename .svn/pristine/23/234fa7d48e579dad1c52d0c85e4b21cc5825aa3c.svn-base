@@ -1,0 +1,631 @@
+<?php
+class admatencion extends bdlaboratorio
+{
+    function whoiam($accion)
+    {
+        //    <input type="hidden" name="accion" value="' . $accionenv . '"/>
+        $ver = isset($_GET["ver"]) ? $_GET["ver"] : '';
+        return '<input type="hidden" name="ver" value="' . $ver .
+            '" ><input type="hidden" name="accion" value="' . $accion . '" >';
+    }
+    function formulario($id, $fecha, $diagnostico, $analisisseleccionado, $doctor, $accion)
+    {
+        $res = '
+        <script type="text/javascript">
+        
+		
+			$(function(){
+			    $.datepicker.setDefaults( $.datepicker.regional[ "es" ] );
+                $("#datepicker").datepicker({
+                    changeYear: true
+                    
+                });
+                $( "#datepicker" ).datepicker( "option", "dateFormat", "yy-mm-dd" ); 
+
+                $( "#datepicker" ).val("' . $fecha . '");
+			 });
+			 </script>
+             <link rel="stylesheet" href="css/example.css" TYPE="text/css" MEDIA="screen">
+<script type="text/javascript" src="js/tabber.js"></script>
+<script type="text/javascript" src="js/resultados.js"></script>
+<form name="i" method="GET" action="index.php"><table>';
+        //$accionenv = 'guardar';
+        $res .= $this->whoiam($accion);
+        $datospaciente = $this->llenardatospaciente($id);
+        // aqui se llena el id del paciente;
+        $res .= '<tr><td>Paciente</td><td>' . $datospaciente[0]['nombres'] . ' ' . $datospaciente[0]['apellidos'] .
+            '<input type="hidden" name="id" value="' . $datospaciente[0]['id'] .
+            '"></td></tr><tr><td>Diagnostico presuntivo</td><td ><input type="text" name="diagnostico" value="' .
+            $diagnostico . '" /></td></tr>
+            <tr><td >Fecha de la atenci&oacute;n mm/dd/aaaa</td><td ><input type="text" id="datepicker" name="fecha" value="" /></td></tr>';
+        // select del doctor
+        $res .= '<tr><td >Nombre del Doctor:</td><td >' . $this->doctor() . '</td></tr>';
+        // desde aqui es el check
+        $res .= '<tr><td colspan="2">' . $this->check($analisisseleccionado) .
+            '</td></tr>
+        <tr><td><input type="submit" value="guardar" /></td></tr></table>';
+        return $res;
+    }
+    function check($analisisseleccionado)
+    {
+        $analisis = $this->checkanalisis();
+        $checkanalisis = '';
+        $o = 0;
+        $e = 0;
+        for ($i = 0; $i < sizeof($analisis); $i++) {
+            if ($o == 5) {
+                $checkanalisis = $checkanalisis . '</tr></table></div></div>';
+                $o = 0;
+                $e = 0;
+            }
+            if ($o == 0) {
+                $o++;
+                $checkanalisis = $checkanalisis .
+                    '<div class="tabber" id="tab1"><div class="tabbertab">
+                <h2>' . $analisis[$i]['nombrec'] . '</h2><p><table>';
+            } else {
+                if ($analisis[$i]['nombrec'] != $analisis[$i - 1]['nombrec']) {
+                    $o++;
+                    $e = 0;
+                    $checkanalisis = $checkanalisis .
+                        '</tr></table></p></div><div class="tabbertab">
+                    <h2>' . $analisis[$i]['nombrec'] . '</h2><p><table>';
+                }
+            }
+            if ($analisis[$i]['idanalisis'] == null) { //  ver si esto esta bien asi
+                $band = true;
+                if ($e == 4) {
+                    $e = 0;
+                    $checkanalisis .= '</tr>';
+                }
+                if ($e == 0) {
+                    $checkanalisis .= '<tr>';
+                }
+
+                for ($a = 0; $a < sizeof($analisisseleccionado); $a++) {
+                    if ($analisis[$i]['id'] == $analisisseleccionado[$a]) {
+                        $e++;
+                        $checkanalisis .= '<td><input class="res" type="checkbox" onclick="" name="a[]" value="' .
+                            $analisis[$i]['id'] . '" checked />' . $analisis[$i]['nombrea'] .
+                            '<div class="res" id="res' . $analisis[$i]['id'] .
+                            '" style="display: none; background-color: #eeeeee; border: 1px solid #778;"></div></td>';
+                        $band = false;
+                    }
+                }
+                if ($band) {
+                    $e++;
+                    $checkanalisis .= '<td><input class="res" type="checkbox" onclick="" name="a[]" value="' .
+                        $analisis[$i]['id'] . '" />' . $analisis[$i]['nombrea'] .
+                        '<div class="res" id="res' . $analisis[$i]['id'] .
+                        '" style="display: none; background-color: #eeeeee; border: 1px solid #778;"></div></div></td>';
+                } else {
+                    $band = false;
+                }
+
+            }
+        }
+        $checkanalisis = $checkanalisis . '</tr></table></div></div>';
+        return $checkanalisis;
+    }
+
+    function formulario1()
+    {
+        $contenido = '';
+        $contenido .= '<script type="text/javascript" src="js/buscar.js" ></script><style type="text/css">
+	.suggestionsBox {
+		position: relative;
+		left: 0px;
+		margin: 10px 0px 0px 0px;
+		width: 200px;
+		background-color: #212427;
+		border: 2px solid #000;	
+		color: #fff;
+	}
+	.suggestionList {
+		margin: 0px;
+		padding: 0px;
+	}	
+	.suggestionList li {	
+		margin: 0px 0px 3px 0px;
+		padding: 3px;
+		cursor: pointer;
+	}
+	.suggestionList li:hover {
+		background-color: #659CD8;
+	}
+</style>
+<form name="i" method="GET" action=
+"index.php">
+<table><tr><th><h2>Ingresar paciente o atencion</h2></th></tr><tr><td>' . $this->
+            whoiam('nuevo') . 'Buscar por:
+<input type="radio" name="modo" value="id" checked>ID paciente
+<input type="radio" name="modo" value="nombres" >Nombre (nombre,apellido)    
+<input type="radio" name="modo" value="ci">CI  
+<input type="radio" name="modo" value="atencion" >ID de la Atencion</td></tr>
+<input type="hidden" name="tabla" value="pacienteb">
+<tr><td colspan="2">
+<center><input type="text" autocomplete="off" type="text" id="nombre" name="nombre" onkeyup="lookup(this.value, document.i.modo, document.i.tabla.value);" >
+<div class="suggestionsBox" id="suggestions" style="display: none;" />
+				<div class="suggestionList" id="autoSuggestionsList">
+					&nbsp;
+				</div></center></td></tr><tr><td colspan="2"><center><input type="submit" value="Buscar"/></center></td></tr></table></form><br />
+                <form name="ii" method="GET" action="index.php"><table><tr><td>' .
+            $this->whoiam('todo2') .
+            '<input type="submit" value="Mostrar Todas las atenciones"/></td></tr></table></form><br />
+            <form name="iii" method="GET" action="index.php"><table><tr><td>
+            ' . $this->whoiam('todo') .
+            '<input type="submit" value="Mostrar Todos los pacientes"/></td></tr></table></form>';
+        return $contenido;
+    }
+    function nuevo($nombre, $modo)
+    {
+        $ret = '';
+
+        switch ($modo) {
+            case 'ci':
+                $usuario = $this->selectw('*', 'paciente', "estado=true and ci='" . $nombre .
+                    "'");
+                if (count($usuario) > 0) {
+                    return $this->formulario($usuario[0]['id'], strftime("%Y-%m-%d", time()), '',
+                        array(), '', 'preguardar'); //($usuario[0]['id']);
+                } else {
+                    $ret = '<h2>No existe paciente, vuela a intentar</h2>' . $this->formulario1();
+                }
+                break;
+            case 'nombres':
+                $sep = explode(",", $nombre);
+                $usuario = $this->selectw('*', 'paciente', "estado=true and nombres='" . $sep[0] .
+                    "' and apellidos='" . $sep[1] . "'");
+                if (count($usuario) > 0) {
+                    return $this->formulario($usuario[0]['id'], strftime("%Y-%m-%d", time()), '',
+                        array(), '', 'preguardar'); //($usuario[0]['id']);
+                } else {
+                    $ret = '<h2>No existe paciente, vuela a intentar</h2>' . $this->formulario1();
+                }
+                break;
+            case 'id':
+                $usuario = $this->selectw('*', 'paciente', 'estado=true and id=' . $nombre);
+                if (count($usuario) > 0) {
+                    return $this->formulario($nombre, strftime("%Y-%m-%d", time()), '', array(), '',
+                        'preguardar'); //($usuario[0]['id']);
+                } else {
+                    $ret = '<h2>No existe paciente, vuela a intentar</h2>' . $this->formulario1();
+                }
+                break;
+            case 'atencion':
+                $usuario = $this->buscarnombre($nombre, $modo);
+                if (count($usuario) > 0) {
+                    return $this->formulario($nombre, strftime("%Y-%m-%d", time()), '', array(), '',
+                        'editar'); //($usuario[0]['id']);
+                } else {
+                    $ret = '<h2>No existe atencion, vuela a intentar</h2>' . $this->formulario1();
+                }
+                break;
+        }
+        return $ret;
+    }
+    function todo()
+    {
+        $temp1 = $this->selectw('*', 'paciente', 'estado=true');
+        $i = 1;
+        $rs = '<h2>Lista de Pacientes Registrados</h2><table><tr><th>No.</th><th>C&oacute;digo de usuario</th><th>Nombre</th><th>Apellido</th><th>CI</th><th>Ciudad de Carnet</th><th>Observaciones</th></tr>';
+        foreach ($temp1 as $temp2) {
+            $rs .= '<tr><td><form method="GET" name="editar' . $i . '" action="index.php">' .
+                $this->whoiam('nuevo') .
+                '<input type="hidden" name="modo" value="id"><input type="hidden" name="nombre" value="' .
+                $temp2['id'] . '"><a title="Click para editar" href="javascript:document.editar' .
+                $i . '.submit();">' . $i . '</a></form></td><td>' . $temp2['id'] . '</td><td>' .
+                $temp2['nombres'] . '</td><td>' . $temp2['apellidos'] . '</td><td>' . $temp2['ci'] .
+                '</td><td>' . $temp2['ciudad'] . '</td><td>' . $temp2['observacion'] .
+                '</td></tr>';
+            $i++;
+        }
+        $rs .= '</table>';
+        return $rs;
+    }
+
+    function todo2()
+    {
+        $temp1 = $this->selectw('solicitud.id idatencion, paciente.id idpaciente, solicitud.fechacreacion fechacreacion, paciente.nombres nombre, paciente.apellidos apellido',
+            'solicitud inner join paciente on solicitud.idpaciente=paciente.id',
+            'solicitud.estado=true');
+        $i = 1;
+        $rs = '<h2>Lista de Atencion</h2><table><tr><th>No.</th><th>Nombre Paciente</th><th>ID Paciente</th><th>ID Atencion</th><th>Fecha de Creaci&oacute;n Atenci&oacute;n</th></tr>';
+        foreach ($temp1 as $temp2) {
+            $rs .= '<tr><td><form method="GET" name="editar' . $i . '" action="index.php">' .
+                $this->whoiam('editar') . '<input type="hidden" name="id" value="' . $temp2['idatencion'] .
+                '"><input type="submit" value="' . $i . '"/></form></td><td>' . $temp2['nombre'] .
+                ' ' . $temp2['apellido'] . '</td><td>' . $temp2['idpaciente'] . '</td><td>' . $temp2['idatencion'] .
+                '</td><td>' . $temp2['fechacreacion'] . '</td></tr>';
+            $i++;
+        }
+        $rs .= '</table>';
+        return $rs;
+    }
+    function doctor()
+    {
+        $contenido = '<script type="text/javascript" src="js/buscar.js" ></script>';
+        $contenido .= '<style type="text/css">
+	.suggestionsBox {
+		position: relative;
+		left: 0px;
+		margin: 10px 0px 0px 0px;
+		width: 200px;
+		background-color: #212427;
+		border: 2px solid #000;	
+		color: #fff;
+	}
+	
+	.suggestionList {
+		margin: 0px;
+		padding: 0px;
+	}
+	
+	.suggestionList li {
+		
+		margin: 0px 0px 3px 0px;
+		padding: 3px;
+		cursor: pointer;
+	}
+	
+	.suggestionList li:hover {
+		background-color: #659CD8;
+	}
+</style>
+<input type="hidden" name="tabla" value="doctorb" />
+<input type="hidden" name="modo" value="nombre" />
+<input type="text" autocomplete="off" type="text" id="nombre" 
+name="doctor" onkeyup="lookup(this.value, document.i.modo.value, document.i.tabla.value);" />
+<div class="suggestionsBox" id="suggestions" style="display: none;">
+				<div class="suggestionList" id="autoSuggestionsList">
+					&nbsp;
+				</div></div>';
+        return $contenido; //style="display: none;"
+    }
+    function guardar($paciente, $diagnostico, $fecha, $resultados, $doctor, $precio)
+    {
+        //aqui se guarda doctor
+        $doc = $this->selectw('*', 'doctor', "lower(nombre)=lower('" . $doctor . "')");
+        if (count($doc) == 0) {
+            $this->insert('doctor', 'nombre', '"' . $doctor . '"');
+            $idd = $this->selectw('id', 'doctor', "nombre='" . $doctor . "'");
+            $iddoctor = $idd[0]['id'];
+        } else {
+            $iddoctor = $doc[0]['id'];
+        }
+        //aqui se guarda solicitud
+        $res = $this->selectw('max(atenciondia) max', 'solicitud', "fechacreacion='" .
+            $fecha. "'"); //strftime("%Y-%m-%d", time()) . "'");
+        if ($res[0]['max'] != '') {
+            $idsolicitud = $res[0]['max'] + 1;
+        } else {
+            $idsolicitud = 1;
+        }
+        $into = 'solicitud';
+        $campos = 'atenciondia, fechacreacion, iddoctor, idpaciente, diagnostico, preciototalestimado';
+        $values = $idsolicitud . ",'" . $fecha . "'," . $iddoctor . "," . $paciente . ",'" . $diagnostico .
+            "'," . $precio;
+        $this->insert($into, $campos, $values);
+        //colocar eso de que en caso de error avise
+        $idsolicitud = $this->selectw('MAX( id ) max', 'solicitud', "estado=true");
+        $banderaatencion = true;
+        $banderaatencion2 = '';
+        $atencion = '';
+        $banderasubgrupo = false;
+        //agregamos los resultados
+        foreach ($resultados as $resultado) {
+            $analisis = $this->selectw('idanalisis', 'tiporesultado', 'estado=true and id=' .
+                $resultado);
+            if ($banderaatencion2 == $analisis[0]['idanalisis']) {
+                $banderaatencion = false;
+            } else {
+                $banderaatencion = true;
+                $banderasubgrupo = true;
+            }
+            $banderaatencion2 = $analisis[0]['idanalisis'];
+            if ($banderaatencion) {
+                $into = 'atencion';
+                $campos = 'idsolicitud,  idanalisis';
+                //sacamos el idanalisis de los resultados
+                $values = $idsolicitud[0]['max'] . "," . $analisis[0]['idanalisis'];
+                $this->insert($into, $campos, $values);
+                $atencion = $this->select('MAX( id ) max', 'atencion');
+            }
+            $this->insert('resultados', 'idatencion, idtiporesultado', $atencion[0]['max'] .
+                ',' . $resultado);
+            //subgrupos
+            if ($banderasubgrupo) {
+                $banderasubgrupo = false;
+                $subgrupo = $this->selectw('id', 'analisisespecifico', 'idanalisis=' . $analisis[0]['idanalisis']);
+                foreach ($subgrupo as $a) {
+                    $values2 = $idsolicitud[0]['max'] . "," . $a['id'];
+                    $this->insert($into, $campos, $values2);
+                    //$this->agregaratencionanalisis($idsolicitud[0]['max'], );
+                    $aten2 = $this->select('MAX( id ) max', 'atencion');
+                    $aten3 = $this->selectw('idanalisis', 'atencion', 'id=' . $aten2[0]['max']);
+                    $resultados2 = $this->selectw('tiporesultado.id',
+                        'tiporesultado INNER JOIN analisisespecifico ON tiporesultado.idanalisis = analisisespecifico.id',
+                        'analisisespecifico.id=' . $aten3[0]['idanalisis']);
+                    foreach ($resultados2 as $b) {
+                        $this->insert('resultados', 'idatencion, idtiporesultado', $aten2[0]['max'] .
+                            ',' . $b['id']);
+                    }
+                }
+            }
+            //metemos los resultados
+
+        }
+        return ' <div  style="height:670px; width=500px;"><embed src="reportes/atencion.php?idsol=' .
+            $idsolicitud[0]['max'] .
+            '" type="application/pdf" width="50%" height="100%"></div>';
+        //"http://localhost/laboratorio0.7/reportes/resultados.php?idsol=1000012"<a href="reportes/atencion.php?idsol='.$idsol.'" target="_blank">Imprimir atencion</a>
+
+
+        //sumar muestras e imprimir atencion con codigo de barras nomasia
+    }
+    function editar()
+    {
+
+    }
+    function eliminar()
+    {
+
+    }
+    function preguardar($paciente, $diagnostico, $fecha, $resultados, $analisis, $doctor)
+    {
+
+        $resultadosimprimibles =
+            '<script type="text/javascript" src="js/ir.js" ></script>
+        <table><tr><th>Resumen de Atenci&oacute;n</th></tr>
+        <tr><td>ID del paciente: ' . $paciente . '</td><td></td><td>Receptor: ' .
+            $doctor . '</td></tr>
+        <tr><td>Fecha emici&oacute;n: ' . $fecha .
+            ' </td><td>. .</td><td>Diagn&oacute;stico presuntivo: ' . $diagnostico .
+            '</td></tr></table><table>';
+        $preciototal = 0;
+        foreach ($analisis as $analis) {
+            $nombres = array();
+            $ids = array();
+
+            foreach ($resultados as $resu) {
+                $todores = $this->selectw('*', 'tiporesultado', 'id=' . $resu);
+                $bandera = true;
+                if ($todores[0]['idanalisis'] == $analis) {
+                    $nombres[] = $todores[0]['nombre'];
+                    $ids[] = $todores[0]['id'];
+                }
+            }
+            $todoanalisis = $this->selectw('*', 'analisisespecifico', 'id=' . $analis);
+            $resultadosimprimibles .= '<tr><th>Analisis</th><th>' . $todoanalisis[0]['nombre'] .
+                '</th></tr><tr><td>Resultados:</td></tr>';
+
+            for ($i = 0; $i < sizeof($nombres); $i++) {
+                $num = $i + 1;
+                $resultadosimprimibles .= '<tr><td>' . $num . '</td><td>' . $nombres[$i] .
+                    '</td></tr>';
+
+            }
+            $cantidadresultados = $this->selectw('count(id) cantidad', 'tiporesultado',
+                'idanalisis=' . $analis);
+            $precio = ($todoanalisis[0]['precio'] / $cantidadresultados[0]['cantidad']) * (sizeof
+                ($nombres));
+            $preciototal += $precio;
+            $resultadosimprimibles .= '<tr><td colspan="2">Precio:' . number_format($precio,
+                2, ".", ",") . ' Bs.</td></tr>';
+            $resultadosimprimibles .= '<tr><td><br /></td></tr>';
+        }
+        $resultadosimprimibles .= '<tr><th colspan="2">Precio Total:' . number_format($preciototal,
+            1, ".", ",") . '0 Bs.</th></tr><tr><td><br /></td></tr></table>
+        <form method="GET" name="guardar" action="index.php"><table><tr><td>
+            ' . $this->whoiam('guardar') . $this->llenar($paciente, $diagnostico,
+            $fecha, $resultados, $analisis, $doctor, $preciototal) . '
+            <input type="submit" id="guardar" value="Crear atenci&oacute;n" onclick="return ir(this.id);" /></td>
+            <td><input type="submit" id="cotizar" value="Crear cotizaci&oacute;n" onclick="return ir(this.id);" /></td>
+            <td><input type="submit" id="atras" value="Volver Atras" onclick="javascript:history.back(1)" /></td></tr></table></form>';
+        return $resultadosimprimibles;
+    }
+
+    function cotizar($id, $fecha, $diagnostico, $analisisseleccionado)
+    {
+        return ' <div  style="height:670px;width="500px;"><embed src="http://localhost/laboratorio0.7/reportes/resultados.php?idsol=1000012" type="application/pdf" width="50%" height="100%"></div> ';
+    }
+    function atras($id, $fecha, $diagnostico, $analisisseleccionado)
+    {
+        return $this->formulario($id, $fecha, $diagnostico, $analisisseleccionado,
+            'preguardar');
+
+    }
+
+
+    function llenar($id, $diagnostico, $fecha, $resultados, $analisis, $doctor, $precio)
+    {
+        $res = '<input type="hidden" name="id" value="' . $id . '">
+        <input type="hidden" name="diagnostico" value="' . $diagnostico . '">
+        <input type="hidden" name="fecha" value="' . $fecha . '">
+        <input type="hidden" name="doctor" value="' . $doctor . '">
+        <input type="hidden" name="precio" value="' . number_format($precio, 1,
+            ".", ",") . '0">';
+
+        foreach ($resultados as $resultado) {
+            $res .= '<input type="hidden" name="b[]" value="' . $resultado . '">';
+        }
+        return $res;
+    }
+
+
+    function aatencion($doctor, $pacientes, $diagnostico, $analisis)
+    {
+        $idsolicitud = $this->agregarsolicitud($doctor, $pacientes, $diagnostico, $precio);
+        foreach ($analisis as $i) {
+            if ($i['seleccionado']) {
+                $this->agregaratencionanalisis($idsolicitud[0]['max'], $i);
+                $aten1 = $this->select('MAX( id ) max', 'atencion');
+                $aten = $this->selectw('idanalisis', 'atencion', 'id=' . $aten1[0]['max']);
+                $resultados = $this->selectw('tiporesultado.id',
+                    'tiporesultado INNER JOIN analisisespecifico ON tiporesultado.idanalisis = analisisespecifico.id',
+                    'analisisespecifico.id=' . $aten[0]['idanalisis']);
+                foreach ($resultados as $m) {
+                    $this->insert('resultados', 'idatencion, idtiporesultado', $aten1[0]['max'] .
+                        ',' . $m['id']);
+                }
+                $subgrupo = $this->selectw('id', 'analisisespecifico', 'idanalisis=' . $i);
+
+                foreach ($subgrupo as $a) {
+                    $this->agregaratencionanalisis($idsolicitud[0]['max'], $a['id']);
+                    $aten2 = $this->select('MAX( id ) max', 'atencion');
+                    $aten3 = $this->selectw('idanalisis', 'atencion', 'id=' . $aten2[0]['max']);
+                    $resultados2 = $this->selectw('tiporesultado.id',
+                        'tiporesultado INNER JOIN analisisespecifico ON tiporesultado.idanalisis = analisisespecifico.id',
+                        'analisisespecifico.id=' . $aten3[0]['idanalisis']);
+                    foreach ($resultados2 as $b) {
+                        $this->insert('resultados', 'idatencion, idtiporesultado', $aten2[0]['max'] .
+                            ',' . $b['id']);
+                    }
+                }
+            }
+
+        }
+        /*foreach ($muestras as $o){
+        if ($o!=''){
+        $this->agregarmuestra($idsolicitud[0]['max'], $o);
+        }
+        }
+        if ($pago!=0){
+        $this->agregarpago($idsolicitud[0]['max'],$pago);
+        }*/
+        //return $res;
+    }
+
+
+    function asolicitud($iddoctor, $idpaciente, $diagnostico, $precio)
+    {
+        $res = $this->selectw('max(atenciondia) max', 'solicitud', "fechacreacion='" .
+            strftime("%Y-%m-%d", time()) . "'");
+        if ($res[0]['max'] != '') {
+            $idsolicitud = $res[0]['max'] + 1;
+        } else {
+            $idsolicitud = 1;
+        }
+        $into = 'solicitud';
+        $campos = 'atenciondia, fechacreacion, iddoctor, idpaciente, diagnostico, preciototalestimado';
+        $values = $idsolicitud . ",now()," . $iddoctor . "," . $idpaciente . ",'" . $diagnostico .
+            "'," . $precio;
+        $this->insert($into, $campos, $values);
+        return $this->selectw('MAX( id ) max', 'solicitud', "estado=true");
+    }
+    function amuestra($idsolicitud, $muestra)
+    {
+        //$re=$this->selectw('id','tipomuestra',"(nombre='".$muestra."') and (estado=true)");
+        //echo $muestra.'??????????????????????????????';
+        $into = 'muestra';
+        $campos = 'idsolicitud,idtipomuestra';
+        $values = $idsolicitud . ",'" . $muestra . "'";
+        return $this->insert($into, $campos, $values);
+    }
+    function pprecio($analisis)
+    {
+        return $this->selectw('precio', 'analisisespecifico', '(' . $analisis .
+            '=id) and (estado=true)');
+    }
+    function ndoctor($nombredoctor)
+    {
+        $into = 'doctor';
+        $campos = 'nombre';
+        $values = "'" . $nombredoctor . "'";
+        $this->insert($into, $campos, $values);
+        return $this->listadoctor();
+    }
+    function checkanalisis()
+    {
+        return $this->selectw('analisisespecifico.id id, analisisespecifico.precio precio, analisisespecifico.nombre nombrea,
+         categoriaanalisis.nombre nombrec, analisisespecifico.idanalisis idanalisis',
+            'analisisespecifico INNER JOIN categoriaanalisis ON analisisespecifico.idcategoria = categoriaanalisis.id',
+            'analisisespecifico.estado = true');
+    }
+    function aatencionanalisis($idsolicitud, $analisis)
+    {
+        $into = 'atencion';
+        $campos = 'idsolicitud,  idanalisis';
+        $values = $idsolicitud . "," . $analisis;
+        return $this->insert($into, $campos, $values);
+
+    }
+    function apago($idsolicitud, $pago)
+    {
+        $into = 'pago';
+        $campos = 'idsolicitud, monto';
+        $values = $idsolicitud . "," . $pago;
+        return $this->insert($into, $campos, $values);
+    }
+
+
+}
+
+$accion = isset($_GET["accion"]) ? $_GET["accion"] : '';
+$id = isset($_GET["id"]) ? $_GET["id"] : '';
+$nombre = isset($_GET["nombre"]) ? $_GET["nombre"] : '';
+$modo = isset($_GET["modo"]) ? $_GET["modo"] : '';
+$b = isset($_GET["b"]) ? $_GET["b"] : array();
+$a = isset($_GET["a"]) ? $_GET["a"] : array();
+$doctor = isset($_GET["doctor"]) ? $_GET["doctor"] : '';
+$analisisseleccionado = isset($_GET["a"]) ? $_GET["a"] : null;
+$boton = isset($_GET["volver"]) ? $_GET["volver"] : '';
+$preciof = isset($_GET["precio"]) ? $_GET["precio"] : '';
+$muestra = isset($_GET["muestra"]) ? $_GET["muestra"] : null;
+$diagnostico = isset($_GET["diagnostico"]) ? $_GET["diagnostico"] : '';
+$pago = isset($_GET["pago"]) ? $_GET["pago"] : '';
+$fecha = isset($_GET["fecha"]) ? $_GET["fecha"] : '';
+$precio = isset($_GET["precio"]) ? $_GET["precio"] : 0.0;
+$atencion = new admatencion();
+header('Content-type: text/html; charset=iso-8859-1');
+$contenido = '<div id="content" align="center"><div class="contactof">';
+switch ($accion) {
+    case 'nuevo':
+        $contenido .= $atencion->nuevo($nombre, $modo);
+        break;
+    case 'preguardar':
+        $contenido .= $atencion->preguardar($id, $diagnostico, $fecha, $b, $a, $doctor);
+        break;
+    case 'guardar':
+        $contenido .= $atencion->guardar($id, $diagnostico, $fecha, $b, $doctor, $precio);
+        break;
+    case 'todo':
+        $contenido .= $atencion->todo();
+        break;
+    case 'todo2':
+        $contenido .= $atencion->todo2();
+        break;
+    case 'cotizar':
+        $contenido .= $atencion->cotizar($id, $fecha, $diagnostico, $analisisseleccionado);
+        break;
+    case 'atras':
+        $contenido .= $atencion->atras($id, $fecha, $diagnostico, $analisisseleccionado);
+        break;
+    case 'todo2':
+        $contenido .= $atencion->todo2();
+        break;
+    case '':
+        $contenido .= $atencion->formulario1();
+        break;
+    case 'editar':
+        $contenido .= $atencion->editar($id);
+        break;
+    case 'eliminar':
+        $contenido .= $atencion->eliminar($id);
+        break;
+    case 'eliminar1':
+        $contenido .= $atencion->eleminar1($id);
+        break;
+    case 'editar1':
+        $contenido .= $atencion->editar1($id, $ci, $nombre, $apellidos, $fechanac, $procedencia,
+            $direccion, $sexo, $telefono, $celular, $email, $sangre, $factorrh, $observaciones,
+            $seguro, $peso, $ciudad);
+        break;
+
+
+    default:
+        $contenido .= '<h2>No existe la accion</h2>';
+}
+
+$contenido .= '</form></div><div><br /></div>';
+echo $contenido;

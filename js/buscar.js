@@ -1,0 +1,36 @@
+ 	$(function(){$("#seleccionmodo").live("set", function(){
+ 	 		alert("hola");
+ 	 	});}
+ 	);
+ 	function lookup(inputString,opcion, tabla) {
+		//alert(inputString+"hola"+opcion+" "+tabla);
+		elegido="";
+		for(i=0;i<opcion.length;i++){
+			if(opcion[i].checked) { 
+			 elegido=opcion[i].value;
+			 }
+		}
+		if (elegido==""){
+		elegido=opcion;
+		}
+		$('#suggestions').hide();
+		if(inputString.length == 0) {
+			// Hide the suggestion box.
+			$('#suggestions').hide();
+		} else {
+		$.post("php/motorjs.php", {buscar: inputString ,funcion:tabla, modo: elegido}, function(data){
+				if(data.length >0) {
+					$('#suggestions').show();
+					$('#autoSuggestionsList').html(data);
+				} else {
+					$('#suggestions').hide();
+				}
+			});
+		}
+	} // lookup
+	
+	function fill(thisValue) {
+	   
+        $('#nombre').val(thisValue);
+		setTimeout("$('#suggestions').hide();", 10);
+	}

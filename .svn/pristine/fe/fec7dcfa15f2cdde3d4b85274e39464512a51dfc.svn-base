@@ -1,0 +1,66 @@
+<?php
+include ('../bdlaboratorio.php');
+class motorjs extends bdlaboratorio
+{
+    function pacienteb($buscar, $modo)
+    {
+        $result = $this->selectw('*', 'paciente', "lower(".$modo.") LIKE lower('$buscar%') and estado=true LIMIT 10");
+        foreach ($result as $temp) {
+            // Format the results, im using <li> for the list, you can change it.
+            // The onClick function fills the textbox with the result.
+
+            // YOU MUST CHANGE: $result->value to $result->your_colum
+            
+            if ($modo=='nombres'){
+                echo '<li onClick="fill(\'' . $temp['nombres'].','.$temp['apellidos']. '\');">' . $temp['nombres'].', '.$temp['apellidos'].
+                '</li>';
+            } else {
+            echo '<li onClick="fill(\'' . $temp[$modo] . '\');">' . $temp[$modo] .
+                '</li>';
+            }
+        }
+    }
+    function doctor($buscar, $modo)
+    {
+        $result = $this->selectw('*', 'doctor', "lower(".$modo.") LIKE lower('".$buscar."%') and estado=true LIMIT 10");
+        foreach ($result as $temp) {
+            if ($modo=='nombres'){
+                echo '<li onClick="fill(\'' . $temp['nombres'].','.$temp['apellidos']. '\');">' . $temp['nombres'].', '.$temp['apellidos'].
+                '</li>';
+            } else {
+            echo '<li onClick="fill(\'' . $temp[$modo] . '\');">' . $temp[$modo] .
+                '</li>';
+            }
+        }
+    }
+	function categoriaanalisis($buscar, $modo)
+    {
+	header('Content-type: text/html; charset=iso-8859-1');
+        $result = $this->selectw('*', 'categoriaanalisis', "lower(".$modo.") LIKE lower('%".$buscar."%') and estado=true LIMIT 10");
+        foreach ($result as $temp) {
+            if ($modo=='nombres'){
+                echo '<li onClick="fill(\'' . $temp['nombre']. '\');">' . $temp['nombre'].
+                '</li>';
+            } else {
+            echo '<li onClick="fill(\'' . $temp[$modo] . '\');">' . $temp[$modo] .
+                '</li>';
+            }
+        }
+    }
+}
+$motorjs = new motorjs();
+$funcion = isset($_POST['funcion']) ? $_POST['funcion'] : '';
+$buscar = isset($_POST['buscar']) ? $_POST['buscar'] : '';
+$modo = isset($_POST['modo']) ? $_POST['modo'] : '';
+switch ($funcion) {
+    case 'paciente':
+        $motorjs->pacienteb($buscar, $modo);
+        break;
+    case 'doctor':
+        $motorjs->doctor($buscar, $modo);
+        break;
+    case 'categoriaanalisis':    
+		$motorjs->categoriaanalisis($buscar, $modo);
+        break;
+}
+?>

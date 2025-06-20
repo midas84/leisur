@@ -1,0 +1,28 @@
+<?php
+require_once("dompdf/dompdf_config.inc.php");
+$id='100034341/2012-05-24';
+$s="<table>	<tr><td><img src='http://localhost/laboratorio0.7/reportes/codigob.php?codigo=".$id."' /></td></tr>
+				</table>";
+
+
+$h['compress']=1;
+$h['Attachment']=0;
+$html = $s;//"<img src='http://localhost/laboratorio/reportes/barcodegen/test.php' /> <table><tr><td>jgjghjhg</td><td>ghjghjghjgh</td></tr></table>";
+//file_get_contents('http://localhost/laboratorio/barcodegen/test.php');
+// Obtenemos el código html de la página web que nos interesa
+$dompdf = new DOMPDF();
+// Creamos una instancia a la clase
+$dompdf->load_html($html);
+$dompdf->render();
+$dompdf->stream("ejemplo.pdf",$h);
+exit();
+ //array $options: accepted options are:
+
+   // 'compress' = > 1 or 0 - apply content stream compression, this is on (1) by default
+   // 'Attachment' => 1 or 0 - if 1, force the browser to open a download dialog, on (1) by default 
+
+  
+  
+
+$pdf->Output();
+?>

@@ -1,0 +1,36 @@
+$(document).ready(function(){
+	$("input.res").change(hacer);
+	//if ($("input.res").get(0).checked){
+	//hacer que verifique sus activados o desactivados
+	//}
+});
+function hacer(){
+$.ajaxSetup({
+'beforeSend' : function(xhr) {
+try{
+xhr.overrideMimeType('text/html; charset=iso-8859-1');
+}
+catch(e){
+ 
+ 
+}
+}});
+
+	if ($(this).get(0).checked){
+		$("div.res#res"+$(this).attr("value")).show();
+		$("div.res#res"+$(this).attr("value")).load("php/res.php?id="+$(this).attr("value")+'&funcion=resultados2');
+	} else {
+		$("div.res#res"+$(this).attr("value")).empty();	
+		$("div.res#res"+$(this).attr("value")).hide();
+	}
+}
+
+function hace(e){//valor,bandera){
+	if ($('input#'+e).attr("checked")){
+		$('input.resultado'+e).attr("checked",true);
+	} else
+	{
+		$('input.resultado'+e).attr("checked",false);
+	}
+}
+

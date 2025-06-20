@@ -1,0 +1,10 @@
+<?php
+
+/**
+ * @author Miguel Angel
+ * @copyright 2012
+ */
+echo '<form><table><tr><td><a href="index.php?ver=paciente">crear nuevo paciente</a></td></tr></table></form>'
+
+
+?>

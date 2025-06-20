@@ -1,0 +1,64 @@
+<?php
+class admautorizar extends bdlaboratorio
+{
+    public $contenido;
+    function whoiam($accion)
+    {
+        $ver = isset($_GET["ver"]) ? $_GET["ver"] : '';
+        return '<input type="hidden" name="ver" value="' . $ver .
+            '" ><input type="hidden" name="accion" value="' . $accion . '" >';
+    }
+    function defaul()
+    {
+        $this->contenido .= '<h2>Lista de resultados llenos por autorizar</h2>
+        <table>
+            <thead>
+                <tr><th>No.</th><th>N&uacute;mero atenci&oacute;n</th>
+                <th>Fecha de creaci&oacute;n</th><th colspan="4">Acciones</th></tr>
+            </thead>
+          
+            <tbody>';
+        $this->mostrarresultados();
+        $this->contenido .= '</tbody>
+        </table>';
+    }
+    function mostrarresultados()
+    {
+
+        $listaresultados = $this->selectw('*', 'solicitud',
+            'autorizado=false and estado=true');
+        $no = 0;
+        foreach ($listaresultados as $resultado) {
+            $this->contenido .= '<tr><td>' . $no++ . '</td><td>' . $resultado['id'] .'</td>
+                <td>' . $resultado['fechacreacion'] .'</td>
+                <td><form name="i'.$no.'" method="GET" action="index.php">'.$this->whoiam('autorizar2').'<input type="hidden" name="idatencion" value="'.$resultado['id'].'"><input type="submit" value="autorizar" /></form></td> 
+                <td><form name="ii'.$no.'" method="GET" action="index.php">'.$this->whoiam('ver').'<input type="hidden" name="idatencion" value="'.$resultado['id'].'"><input type="submit" value="ver" /></form></td>
+                <td><form name="iii'.$no.'" method="GET" action="index.php">'.$this->whoiam('editar').'<input type="hidden" name="idatencion" value="'.$resultado['id'].'"><input type="submit" value="editar" /></form></td>
+                <td><form name="iv'.$no.'" method="GET" action="index.php">'.$this->whoiam('borrar').'<input type="hidden" name="idatencion" value="'.$resultado['id'].'"><input type="submit" value="borrar" /></form></td></tr>';
+        }
+    }
+    function autorizar2(){
+        $this->autorizar($_GET['idatencion']);
+        $this->contenido.='Se autorizo correctamente la atenci&oacute;n No.'. $_GET['idatencion'].'</br>';
+        $this->defaul();
+         
+    }
+    function ver(){
+    
+    }
+    function editar(){
+        
+    }
+    function borrar(){
+        
+    }    
+}
+header('Content-type: text/html; charset=iso-8859-1');
+$autorizar = new admautorizar();
+$autorizar->contenido =
+    '<div id="content" align="center"><div class="contactof">';
+
+$accion = isset($_GET["accion"]) ? $_GET["accion"] : 'defaul';
+$autorizar->$accion();
+$autorizar->contenido .= '</div><div><br /></div>';
+echo $autorizar->contenido;

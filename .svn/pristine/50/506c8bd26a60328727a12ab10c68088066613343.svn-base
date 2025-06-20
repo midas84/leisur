@@ -1,0 +1,10 @@
+<table  background="xampp/htdocs/pruebas/cre/credencial del paciente.jpg" width="648" height="395">
+<tr><td height="150"> </td></tr>
+
+<tr><td width="35" height="30"><b>Nombre:</b></td><td>".$nombre."</td><td colspan="2">".$apellido."</td></tr>
+<tr><td width="35" height="30"><b>Telefono:</b></td><td>fdgdfgfdg</td></tr>
+<tr><td width="35" height="30"><b>Grupo:</b></td><td>".$grupoSanguineo."</td><td width="85"><b>Factor RH:</b></td><td>".$factorrh."</td></tr>
+<tr><td width="35" height="30"><b>Seguro:</b></td><td>".$seguro."</td></tr>
+<tr><td  colspan="2"></td><td></td><td>".$codbarras."</td></tr>
+<tr><td></td></tr>
+</table>

@@ -1,0 +1,285 @@
+<?php 
+class admanalisis extends bdlaboratorio {
+	function formulario1()
+    {
+        $contenido = '<script type="text/javascript" src="js/buscar.js" ></script>';
+        $contenido .= '<style type="text/css">
+						.suggestionsBox {
+							position: relative;
+							left: 0px;
+							margin: 10px 0px 0px 0px;
+							width: 200px;
+							background-color: #212427;
+							border: 2px solid #000;	
+							color: #fff;
+						}
+						
+						.suggestionList {
+							margin: 0px;
+							padding: 0px;
+						}
+						
+						.suggestionList li {
+							
+							margin: 0px 0px 3px 0px;
+							padding: 3px;
+							cursor: pointer;
+						}
+						
+						.suggestionList li:hover {
+							background-color: #659CD8;
+						}
+					</style>
+					<form name="i" method="GET" action="index.php" >
+						<table>
+							<tr>
+								<th>
+									<h2>Ingresar Analisis Especifico nuevo o que se va a editar</h2>
+								</th>
+							</tr>
+							<tr>
+								<td>' .$this->whoiam('buscar') . 'Buscar por:
+									<input type="radio" name="modo" value="nombre" checked>Nombre    
+									<input type="radio" name="modo" value="id">ID analisis  
+								</td>
+							</tr>
+							<input type="hidden" name="tabla" value="analisisespecifico">
+							<tr>
+								<td colspan="2">
+									<input autocomplete="off" type="text" id="nombre" name="nombre" onkeyup="lookup(this.value, document.i.modo, document.i.tabla.value);" >
+									<div class="suggestionsBox" id="suggestions" style="display: none;">
+										<div class="suggestionList" id="autoSuggestionsList">
+											&nbsp;
+										</div>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<input type="submit" value="Buscar"/>
+								</td>
+							</tr>
+						</table>
+					</form>
+					<br />
+					<form name="ii" method="GET" action="index.php">
+						<table>
+							<tr>
+								<td>' . $this->whoiam('todo') .
+									'<input type="submit" value="Mostrar Todos las Analisis"/>
+								</td>
+							</tr>
+						</table>
+					</form>';
+        return $contenido;
+    }
+	function formulario($id, $nombre, $descripcion, $precio, $idcategoria, $estado, $accion ){
+		$contenido='<form action="index.php" method="GET">';
+		if (!($id=='')){
+		$contenido.='<h2>Analisis Especifico Encontrada <br />Editar Analisis Especifico</h2>
+					<table>
+					<tr>
+						<td>
+							id
+						</td>
+						<td>
+							'.$id.' <input type="hidden" name="id" value="'.$id.'"/><input type="hidden" name="modo" value="id"/> 
+						</td>
+					</tr>';
+		} 
+		else {
+			$contenido.='<h2>No existe el analisis especifico se creara una nueva <br />Ingresar Nuevo Analisis Especifico</h2>
+					<table >';
+		}
+		$contenido.='
+					<tr>
+						<td>
+							nombre
+						</td>
+						<td>
+							<input type="text" name="nombre" value="'.$nombre.'"/> 
+						</td>
+					</tr>
+					<tr>
+						<td>
+						descripcion
+						</td>
+						<td>
+							<input type="text" name="descripcion" value="'.$descripcion.'"/> 
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Precio
+						</td>
+						<td>
+							Bs. <input type="text" name="precio" value="'.$precio.'"/>.00
+						
+						</td>
+					</tr>
+					
+					<tr>
+						<td>
+							Categoria Analisis
+						</td>
+						<td>
+							'.$this->categoria($idcategoria).'
+						</td>
+					<tr>
+						<td>
+							estado
+						</td>
+						<td>';
+		if ($estado){
+			$contenido.='		<input type="radio" name="estado" value=true checked />Activo <br />
+								<input type="radio" name="estado" value=false />Inactivo';
+		}
+		else {
+			$contenido.='		<input type="radio" name="estado" value=true />Activo <br />
+								<input type="radio" name="estado" value=false checked/>Inactivo';
+		}
+		$contenido.='		</td>
+						</tr>
+						<tr>' . $this->whoiam($accion) .
+									'
+							<td colspan="2">
+								<input type="submit" value="Guardar"/>
+							</td>
+						</tr>
+					</table></form>';
+		
+		return $contenido;
+	}
+	function categoria($id){
+	$categorias=$this->selectw('id, nombre','categoriaanalisis','estado=true order by nombre');
+	$res='<select name="categoria" style="width:400px;">';
+	foreach ($categorias as $categoria){
+		if ($categoria['id']==$id){
+			$res .='<option value="'.$categoria['id'].'" selected>'.$categoria['nombre'].'</option>'; 
+		}
+		else {
+			$res .='<option value="'.$categoria['id'].'">'.$categoria['nombre'].'</option>'; 
+		}
+	}
+	$res.="</select>";
+	return $res;
+	}
+	function buscar(){
+		$nombre=isset($_GET["id"]) ? $_GET["id"] : ($nombre=isset($_GET["nombre"]) ? $_GET["nombre"] : '' );
+		//$nombre=isset($_GET["nombre"]) ? $_GET["nombre"] : '';
+		$modo=isset($_GET["modo"]) ? $_GET["modo"] : 'nombre';
+		$idcategoria=isset($_GET["idcategoria"]) ? $_GET["idcategoria"] : '';
+		if (!($idcategoria=='')){
+			$resultado=$this->selectw('*','analisisespecifico',"lower(".$modo.") like lower('".$nombre."') and idcategoria=".$idcategoria);
+		} 
+		else {
+			$resultado=$this->selectw('*','analisisespecifico',"lower(".$modo.") like lower('".$nombre."')"); 
+		}
+		if (count($resultado)>0){
+			if (count($resultado)>1){
+				return $this->escogercategoria();
+			}
+			else {
+				return $this->formulario($resultado[0]['id'],$resultado[0]['nombre'],$resultado[0]['descripcion'], $resultado[0]['precio'], $resultado[0]['idcategoria'], $resultado[0]['estado'],"editar");
+			}
+		} else {
+			return $this->formulario('',$nombre,'','','',true,"crear");
+		}	
+	}
+	function escogercategoria(){
+		$nombre=isset($_GET["nombre"]) ? $_GET["nombre"] : '';
+		$res='<h2>Se encontro varios analisis con el mismo nombre en diferentes categorias,<br /> por favor escoger la categoria de la que desea modificar</h2>
+		<form action="index.php" method="GET"><table><tr><th>Categorias</th></tr><tr><td>
+		<select name="idcategoria"><option value=""></option>';
+		$categorias=$this->selectw('categoriaanalisis.nombre nombre, categoriaanalisis.id id','analisisespecifico inner join categoriaanalisis on analisisespecifico.idcategoria=categoriaanalisis.id',"lower(analisisespecifico.nombre) like lower('%".$nombre."%')");
+		foreach($categorias as $categoria){
+			$res.='<option value="'.$categoria['id'].'">'.$categoria['nombre'].'</option>';
+		} 
+		$res.='</select><input type="hidden" name="modo" value="nombre" /><input type="hidden" name="nombre" value="'.$nombre.'" /></td></tr><tr><td>
+		'.$this->whoiam('buscar').'<input type="submit" value="Siguiente"/></td></tr></table></form>';
+		return $res;
+	}
+	function editar(){
+		$nombre=isset($_GET["nombre"]) ? $_GET["nombre"] : '';
+		$descripcion=isset($_GET["descripcion"]) ? $_GET["descripcion"] : '';
+		$estado=isset($_GET["estado"]) ? $_GET["estado"] : true;
+		$precio=isset($_GET["precio"]) ? $_GET["precio"] : "";
+		$idcategoria=isset($_GET["categoria"]) ? $_GET["categoria"] : "";
+		$id=isset($_GET["id"]) ? $_GET["id"] : "";
+		//echo $nombre.'<br />'.$descripcion.'<br />'.$estado.'<br />'.$precio.'<br />'.$idcategoria.'<br />'.$id
+		$res="";
+		$c=$this->update('analisisespecifico',"nombre='".$nombre."', descripcion='".$descripcion."', estado=".$estado.", precio=".$precio.", idcategoria=".$idcategoria,"id='".$id."'");
+		
+		if ($c){
+			$res="<h2>Se modifico correctamente</h2>";
+		} 
+		else {
+			$res="<h2>Error, no se pudo actualizar</h2>";
+		}		
+		return $res.$this->buscar();
+	}
+	function crear(){
+		$nombre=isset($_GET["nombre"]) ? $_GET["nombre"] : '';
+		$descripcion=isset($_GET["descripcion"]) ? $_GET["descripcion"] : '';
+		$estado=isset($_GET["estado"]) ? $_GET["estado"] : true;
+		if ($this->insert('categoriaanalisis','nombre, descripcion, estado',"'".$nombre."','".$descripcion."',".$estado)){
+		 return "<h2>Se creo la categoria correctamente, la puede modificar</h2>".$this->buscar();
+		} else {
+		 return "<h2>Error</h2>".$this->formulario('',$nombre,$descripcion,'true',"crear");
+		}
+	}
+	function todo(){
+        $temp1 = $this->select('*', 'categoriaanalisis');
+        $i = 0;
+        $i++;
+        $rs = '<h2>Lista de Categorias de Analisis</h2>
+		<table>
+			<tr>
+				<th>
+					id.
+				</th>
+				<th>
+					Nombre
+				</th>
+				<th>
+					Descripcion
+				</th>
+				<th>
+					Estado
+				</th>
+			</tr>';
+        foreach ($temp1 as $temp2) {
+            $rs .= '<tr><td>';
+            $rs .= '<form method="GET" name="editar' . $i . '" action="index.php">' . $this->
+                whoiam('buscar') . '<input type="hidden" name="nombre" value="' . $temp2['nombre'] .
+                '"><input type="hidden" name="modo" value="nombre"><a title="Click para editar" href="javascript:document.editar' . $i .
+                '.submit();">' . $i . '</a></form></td><td>' . $temp2['nombre'] . '</td><td>' . $temp2['descripcion'] .
+                '</td><td>';
+			if ($temp2['estado']){
+				$rs.="activo";
+			}
+			else{
+				$rs.="inactivo";
+			} 
+			$rs.= '</td></tr>';
+            $i++;
+        }
+        $rs .= '</table>';
+        return $rs;
+    }
+	function whoiam($accion)
+    {
+        $ver = isset($_GET["ver"]) ? $_GET["ver"] : '';
+        return '<input type="hidden" name="ver" value="' . $ver .
+            '" ><input type="hidden" name="accion" value="' . $accion . '" >';
+    }
+	
+}
+$accion = isset($_GET["accion"]) ? $_GET["accion"] : 'formulario1';
+$admcatanalisis=new admanalisis();
+$contenido = '<div id="content" align="center"><div class="contactof">';
+$contenido.= $admcatanalisis->$accion();
+$contenido .= '</div><div><br /></div>';
+echo $contenido;
+
+?>

@@ -1,0 +1,69 @@
+<?php
+
+/**
+ * @author Miguel Angel
+ * @copyright 2012
+ */
+/*echo '
+<li id="menu_active"><a href="index.php?ver=paciente">Paciente</a></li>
+<li><a href="index.php?ver=atencion">Atención</a></li>
+<li><a href="index.php?ver=resultados">Resultados</a></li>
+<li><a href="index.php?ver=primir">Imprimir Resultados</a></li>
+<div id="control"><table><tr><td>Usuario:'.$_SESSION['nombre'].' </td></tr><tr><td><a href="index.php?ver=deslogear">Salir</a></td></tr></table></div>
+*/
+echo'
+  <div id="control"> Usuario:'.$_SESSION['nombre'].'<br> <a href="index.php?ver=deslogear">Salir</a></div>
+<div id="menu">
+<ul class="mi-menu">
+  <li><a href="#"> Reg. Info. </a>
+    <ul>   
+      <li><a href="index.php?ver=paciente2">Adm. paciente </a></li>
+      <li><a href="index.php?ver=atencion">Adm. atencion </a></li>
+    </ul>
+  </li>
+  <li><a href="#"> Resultados </a>
+    <ul> 
+      <li><a href="index.php?ver=autorizar">Autorizar</a></li>
+      <li><a href="index.php?ver=autorizar">Editar</a></li>
+      <li><a href="index.php?ver=resultados">Registrar</a></li>
+      <li><a href="index.php?ver=primir">Imprimir</a></li>
+    </ul>
+  </li>
+  <li><a href="#"> Reportes </a>
+    <ul> 
+      <li><a href="#">Atendidos</a></li>
+      <li><a href="#">Res. Llenos</a></li>
+      <li><a href="#">Alguno Mas</a></li>
+    </ul>
+  </li>
+  <li>
+    <a href="#"> Herramientas </a>
+    <ul>
+      <li><a href="index.php?ver=admtiporesultado">Adm. Tipos de Resultado</a></li>
+      <li><a href="index.php?ver=admcatanalisis">Adm. Categoria Analisis</a></li>
+      <li><a href="index.php?ver=admanalisisespec">Adm. Analisis Especificos</a></li>
+    </ul>
+  </li>
+  <li>
+    <a href="#">Caja chica </a>
+    <ul>
+      <li><a href="#">Entradas</a></li>
+      <li><a href="#">Salidas</a></li>
+      <li><a href="#">Resumen</a></li>
+    </ul>
+  </li>
+  
+  <li>
+    <a href="#"> Usuarios </a>
+    <ul>
+      <li><a href="URL_enlace_2.1">texto_submenú_2.1</a></li>
+      <li><a href="URL_enlace_2.2"> texto_submenú_2.2 </a></li>
+      <li><a href="URL_enlace_2.3"> texto_submenú_2.3 </a></li>
+    </ul>
+  </li>
+</ul>
+
+
+</div>
+';
+?>

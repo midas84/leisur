@@ -1,0 +1,187 @@
+<div id="content" align="center">
+<?php
+$errorlogin = isset($_SESSION["error"]) ? $_SESSION["error"] : false;
+$ci = isset($_GET["ci"]) ? $_GET["ci"] : '';
+$nombre = isset($_GET["nombre"]) ? $_GET["nombre"] : '';
+$apellidos = isset($_GET["apellidos"]) ? $_GET["apellidos"] : '';
+$fechanac = isset($_GET["fechanac"]) ? $_GET["fechanac"] : '';
+$peso = isset($_GET["peso"]) ? $_GET["peso"] : '';
+$procedencia = isset($_GET["procedencia"]) ? $_GET["procedencia"] : '';
+$direccion = isset($_GET["direccion"]) ? $_GET["direccion"] : '';
+$telefono = isset($_GET["telefono"]) ? $_GET["telefono"] : '';
+$celular = isset($_GET["celular"]) ? $_GET["celular"] : '';
+$email = isset($_GET["email"]) ? $_GET["email"] : '';
+$observaciones = isset($_GET["observaciones"]) ? $_GET["observaciones"] : '';
+$seguro = isset($_GET["seguro"]) ? $_GET["seguro"] : '';
+$sexo = isset($_GET["sexo"]) ? $_GET["sexo"] : '';
+$factorrh = isset($_GET["factorrh"]) ? $_GET["factorrh"] : '';
+$sangre = isset($_GET["sangre"]) ? $_GET["sangre"] : '';
+$sexo = isset($_GET["sexo"]) ? $_GET["sexo"] : '';
+$accion = isset($_GET["accion"]) ? $_GET["accion"] : '';
+$id = isset($_GET["id"]) ? $_GET["id"] : '';
+
+$accionenv = 'guardar';
+switch ($accion) {
+    case 'guardar':
+        if (!($base->buscarpaciente($nombre, $apellidos))) {
+            echo 'existe revisa los datos';
+        } else {
+            $base->nuevopaciente($ci, $nombre, $apellidos, $fechanac, $procedencia, $direccion,
+                $sexo, $telefono, $celular, $email, $sangre, $factorrh, $observaciones, $seguro,
+                $peso);
+            echo 'Se introdujo bien';
+            $accion = 'editar';
+            $accionenv = 'editar';
+        }
+        ;
+        break;
+    case 'editar';
+        $base->editarpaciente($id, $ci, $nombre, $apellidos, $fechanac, $procedencia, $direccion,
+            $sexo, $telefono, $celular, $email, $sangre, $factorrh, $observaciones, $seguro,
+            $peso);
+        break;
+        //echo $ci.$nombre.$apellidos.$fechanac.$peso.$procedencia.$direccion.$telefono.$celular.$email.$observaciones.$seguro.$factorrh.$sangre.$sexo.$accion;
+}
+switch ($factorrh) {
+    case '':
+        $nadafactorrh = 'selected';
+        $positivofactorrh = '';
+        $negativofactorrh = '';
+        break;
+    case 'negativo':
+        $nadafactorrh = '';
+        $positivofactorrh = '';
+        $negativofactorrh = 'selected';
+        break;
+    case 'positivo':
+        $nadafactorrh = '';
+        $positivofactorrh = 'selected';
+        $negativofactorrh = '';
+        break;
+}
+
+switch ($sangre) {
+    case '':
+        $sangrenada = 'selected';
+        $sangrea = '';
+        $sangreb = '';
+        $sangreab = '';
+        $sangreo = '';
+        break;
+    case 'a':
+        $sangrenada = '';
+        $sangrea = 'selected';
+        $sangreb = '';
+        $sangreab = '';
+        $sangreo = '';
+        break;
+    case 'b':
+        $sangrenada = '';
+        $sangrea = '';
+        $sangreb = 'selected';
+        $sangreab = '';
+        $sangreo = '';
+        break;
+    case 'ab':
+        $sangrenada = '';
+        $sangrea = '';
+        $sangreb = '';
+        $sangreab = 'selected';
+        $sangreo = '';
+        break;
+    case 'o':
+        $sangrenada = '';
+        $sangrea = '';
+        $sangreb = '';
+        $sangreab = '';
+        $sangreo = 'selected';
+        break;
+}
+switch ($sexo) {
+    case '':
+        $hombre = '';
+        $mujer = '';
+        break;
+    case 'm':
+        $hombre = '';
+        $mujer = 'checked';
+        break;
+    case 'h':
+        $hombre = 'checked';
+        $mujer = '';
+        break;
+
+}
+$carnet = '';
+echo '<form action="index.php" name="form" method="GET" class="contactof"><table>';
+if ($accion == 'editar') {
+    $ids = $base->ultimopaciente();
+    $carnet = '<td><a href="reportes/carnet.php?gruposanguineo=' . $sangre .
+        '&nombres=' . $nombre . '&apellidos=' . $apellidos . '&seguro=' . $seguro .
+        '&factorrh=' . $factorrh . '&telefono=' . $telefono . '&id=' . $ids[0]['max'] .
+        '" target="_blank">Imprimir Carnet</a></td><a href="index.php?id=' . $ids[0]['max'] .
+        '&ver=atencion&accion=nuevo">Llenar atencion</a><td></td>';
+    echo $carnet;
+    echo '<tr ><td id="tablaf1">Id usuario:</td><td><input name="id" size="25" value="' .
+        $ids[0]['max'] . '"/></td></tr>';
+}
+;
+echo '
+<tr><td>C.I.:</td><td><input name="ci" size="25" value="' . $ci .
+    '" type="text1"/></td><td>Expedido en:</td><td><SELECT NAME="factorrh" SIZE=1"> 
+								<OPTION VALUE="" ' . $expedido . '></OPTION>
+								<OPTION VALUE="chuquisaca" ' . $positivofactorrh . '>Chuquisaca</OPTION>
+								<OPTION VALUE="cochabamba" ' . $negativofactorrh . '>Cochabamba</OPTION>
+								<OPTION VALUE="tarija" ' . $negativofactorrh . '>Tarija</OPTION>
+								<OPTION VALUE="lapaz" ' . $negativofactorrh . '>La Paz</OPTION>
+								<OPTION VALUE="oruro" ' . $negativofactorrh . '>Oruro</OPTION>
+								<OPTION VALUE="potosi" ' . $negativofactorrh . '>Potosi</OPTION>
+								<OPTION VALUE="santacruz" ' . $negativofactorrh . '>Santa Cruz</OPTION>
+								<OPTION VALUE="pando" ' . $negativofactorrh . '>Pando</OPTION>
+								<OPTION VALUE="beni" ' . $negativofactorrh . '>Beni</OPTION>
+							</SELECT> </td></tr>
+<tr><td>nombres:</td><td><input name="nombre" size="25" value="' . $nombre .
+    '" type="text"/></td></tr>
+<td>Apellidos:</td><td><input name="apellidos" size="25" value="' . $apellidos .
+    '" type="text"/></td></tr>
+<tr><td>Fecha Nacimiento(aaaa-mm-dd):</td><td><input name="fechanac" size="25" value="' .
+    $fechanac . '" type="text"/></td></tr>
+<tr><td>peso:</td><td><input name="peso" size="25" value="' . $peso .
+    '" type="text"/></td></tr>
+<tr><td>procedencia:</td><td><input name="procedencia" size="25" value="' . $procedencia .
+    '" type="text"/></td></tr>
+<tr><td>direccion:</td><td><input name="direccion" size="25" value="' . $direccion .
+    '" type="text"/></td></tr>
+<tr><td>telefono:</td><td><input name="telefono" size="25" value="' . $telefono .
+    '" type="text"/></td></tr>
+<tr><td>celular:</td><td><input name="celular" size="25" value="' . $celular .
+    '" type="text"/></td></tr>
+<tr><td>email:</td><td><input name="email" size="25" value="' . $email .
+    '" type="text"/></td></tr>
+<tr><td>observaciones:</td><td><textarea name="observaciones" size="25" value="' .
+    $observaciones . '" /></textarea></td></tr>
+<tr><td>seguro:</td><td><input name="seguro" size="25" value="' . $seguro .
+    '" type="text"/></td></tr>
+<tr><td>tipo de Sangre:</td><td><SELECT NAME="sangre" SIZE=1" > 
+									<OPTION VALUE="" ' . $sangrenada . '></OPTION>
+									<OPTION VALUE="a" ' . $sangrea . '>A</OPTION>
+									<OPTION VALUE="b" ' . $sangreb . '>B</OPTION>
+									<OPTION VALUE="ab" ' . $sangreab . '>AB</OPTION>
+									<OPTION VALUE="o" ' . $sangreo . '>O</OPTION>
+								</SELECT></td> <td>Factor Rh:</td><td><SELECT NAME="factorrh" SIZE=1"> 
+								<OPTION VALUE="" ' . $nadafactorrh . '></OPTION>
+								<OPTION VALUE="positivo" ' . $positivofactorrh . '>positivo</OPTION>
+								<OPTION VALUE="negativo" ' . $negativofactorrh . '>negativo</OPTION>
+							</SELECT> </td></tr>
+<tr><td>Sexo:</td><td><input type="radio" name="sexo" value="h" ' . $hombre .
+    '>Hombre<input type="radio" name="sexo" value="m" ' . $mujer . '>Mujer</td></tr>
+
+<tr><td cospan="2"><input type="hidden" name="ver" value="paciente"/><input type="hidden" name="accion" value="' .
+    $accionenv . '"/><input type="submit" value="guardar"/></td>' . $carnet . '</tr>
+</table></form>';
+
+
+
+?>
+<br /><br />
+</div>

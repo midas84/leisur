@@ -1,0 +1,170 @@
+<?
+require_once ("dompdf/dompdf_config.inc.php");
+/*$grupoSanguineo=$_GET['gruposanguineo'];//'O';
+$nombre=$_GET['nombres'];//'Miguel Angel';
+$apellido=$_GET['apellidos'];//'Vargas';
+//$fechanac=$_GET['fechanac'];//'2012-12-12';
+$factorrh=$_GET['factorrh'];//'negativo';
+$id=$_GET['id'];//'10003434';
+$seguro=$_GET['seguro'];
+$telefono=$_GET['telefono'];*/
+$id = 4000;
+$cab = '<title>Mi primera página con estilo</title>
+  <style type="text/css">
+ 
+  @page { margin: 2cm 1cm 2.5cm 1cm;} 
+  img {  
+		position: absolute;
+        	top: 0.8cm;  
+		left: 7.8cm;
+		width: 3.5cm;
+		
+	}
+  #ho{
+    position: absolute;
+    top: 2.7cm;
+    
+		
+  }
+  table {
+		font-size: 14px;
+		width:12cm; 
+		left:-1cm;
+	}
+  table#edad{
+	position: absolute;
+	top: 0.0cm;
+	left: 9.8cm;
+  }	
+  td.sep {
+  	width:1cm;
+  }
+  </style>
+</head><body>';
+$idsol = isset($_GET["idsol"]) ? $_GET["idsol"] : '';
+include ('../bdlaboratorio.php');
+$base = new bdlaboratorio();
+$todo = $base->todosolicitud($idsol);
+
+$cab = $cab . '<table ><tr><td>Nombre:</td><td>' . $todo[0]['nombres'] .
+    ' ' . $todo[0]['apellidos'] . '</td></tr></table>
+<table id="edad"><tr><td colspan="2">Edad:' . $todo[0]['edad'] .
+    '</td></tr></table><table>
+<tr><td>Fecha:' . $todo[0]['fecha'] . '</td><td>No.:' . $todo[0]['numerodia'] .
+    '</td><td></td><td></td></tr></table>
+<table><tr><td><img src="http://localhost/laboratorio0.7/reportes/codigob.php?codigo=' .
+    $idsol . '"></td></tr>
+</table><table id="ho">';
+
+$resultados = $base->resultados($idsol);
+$pa = 0;
+$pagina=0;
+for ($i = 0; $i < count($resultados); $i++) {
+    if (($i == 0) || ($resultados[$i]['analisis'] != $resultados[$i - 1]['analisis'])) {
+        if (($i == 0) || ($resultados[$i]['categoria'] != $resultados[$i - 1]['categoria'])) {
+            
+            if ($pa > 17) {
+                $pagina++;
+                $cab = $cab . '</table>';
+                $cab = $cab . '<div style="page-break-before: always;"></div>';
+                $cab = $cab . '<table ><tr><td>Nombre:</td><td>' . $todo[0]['nombres'] .
+                    ' ' . $todo[0]['apellidos'] . '</td></tr></table>
+<table id="edad"><tr><td colspan="2">Edad:' . $todo[0]['edad'] .
+    '</td></tr></table><table>
+<tr><td>Fecha:' . $todo[0]['fecha'] . '</td><td>No.:' . $todo[0]['numerodia'] .
+                    '</td><td></td><td></td></tr></table>
+<table><tr><td><img src="http://localhost/laboratorio/reportes/codigob.php?codigo=' .
+                    $idsol . '"></td></tr>
+</table><table id="ho">';
+                
+                $pa = 0;
+            }
+            $pa++;
+            $cab = $cab . '<tr><th colspan="5"><center>' . $resultados[$i]['categoria'] .
+                '</center></th></tr>';
+        }
+        if ($pa > 17) {
+                $pagina++;
+                $cab = $cab . '</table>';
+                $cab = $cab . '<div style="page-break-before: always;"></div>';
+                $cab = $cab . '<table ><tr><td>Nombre:</td><td>' . $todo[0]['nombres'] .
+                    ' ' . $todo[0]['apellidos'] . '</td></tr></table>
+<table id="edad"><tr><td colspan="2">Edad:' . $todo[0]['edad'] .
+    '</td></tr></table><table>
+<tr><td>Fecha:' . $todo[0]['fecha'] . '</td><td>No.:' . $todo[0]['numerodia'] .
+                    '</td><td></td><td></td></tr></table>
+<table><tr><td><img src="http://10.10.10.2/laboratorio/reportes/codigob.php?codigo=' .
+                    $idsol . '"></td></tr>
+</table><table id="ho">';   
+                $pa = 0;
+            }
+        $pa++;
+        $cab = $cab . '<tr><th>' . $resultados[$i]['analisis'] .
+            '</th><th colspan="4"></th></tr>';
+    }
+    if (!(($resultados[$i]['valor'] == '')||($resultados[$i]['valor'] == ' '))) {
+        $pa++;
+        $cab = $cab . '<tr><td>' . $resultados[$i]['resultado'] .
+            '</td><td class="sep"></td>';
+if (($resultados[$i]['parametroinferior']==0)&&($resultados[$i]['parametrosuperior']==0)||(($resultados[$i]['parametroinferior']=='')||($resultados[$i]['parametroinferior']==''))){
+	        $cab = $cab . '<td colspan="3">' . $resultados[$i]['valor'] . ' ' . $resultados[$i]['unidadmedicion'] .
+            '</td>';
+	}else{
+		$cab = $cab . '<td>' . $resultados[$i]['valor'] . ' ' . $resultados[$i]['unidadmedicion'] .
+            '</td><td class="sep"></td>';
+}
+
+	if (!(($resultados[$i]['parametroinferior']==0)&&($resultados[$i]['parametrosuperior']==0)||(($resultados[$i]['parametroinferior']=='')||($resultados[$i]['parametroinferior']=='')))){
+	        $cab=$cab.'<td>' . $resultados[$i]['parametroinferior'] . ' - ' . $resultados[$i]['parametrosuperior'].' '.$resultados[$i]['unidadmedicion'].'</td>'; 
+	}
+        $cab=$cab.'</tr>';
+    }
+    
+    if ($pa == 20) {
+        $pagina++;
+        $cab = $cab . '</table>';
+        $cab = $cab . '<div style="page-break-before: always;"></div>';
+        $cab = $cab . '<table ><tr><td>Nombre:</td><td>' . $todo[0]['nombres'] .
+            ' ' . $todo[0]['apellidos'] . '</td></tr></table>
+<table id="edad"><tr><td colspan="2">Edad:' . $todo[0]['edad'] .
+    '</td></tr></table><table>
+<tr><td>Fecha:' . $todo[0]['fecha'] . '</td><td>No.:' . $todo[0]['numerodia'] .
+            '</td><td></td><td></td></tr></table>
+<table><tr><td><img src="http://localhost/laboratorio/reportes/codigob.php?codigo=' .
+            $idsol . '"></td></tr>
+</table><table id="ho">';
+        
+        $pa = 0;
+    }
+}
+$cab = $cab . '</table>';
+$s = $cab;
+$html = $s . '</body>';
+
+$h['compress'] = 1;
+$h['Attachment'] = 0;
+$html = $s;
+$html;
+//Obtenemos el código html de la página web que nos interesa
+
+$dompdf = new DOMPDF();
+// Creamos una instancia a la clase
+$hoja = array(
+    0.0,
+    0.0,
+    350.0,
+    550.2);
+$dompdf->set_paper($hoja);
+$dompdf->load_html($html);
+$dompdf->render();
+$dompdf->stream("ejemplo.pdf", $h);
+exit();
+//array $options: accepted options are:
+
+// 'compress' = > 1 or 0 - apply content stream compression, this is on (1) by default
+// 'Attachment' => 1 or 0 - if 1, force the browser to open a download dialog, on (1) by default
+
+
+$pdf->Output();
+
+?>

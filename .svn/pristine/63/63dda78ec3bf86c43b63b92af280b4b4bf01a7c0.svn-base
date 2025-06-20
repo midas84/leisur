@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * @author Miguel Angel
+ * @copyright 2012
+ */
+ echo '
+ <article class="col1">
+      <div class="pad_1">
+    
+ <h2>Manejo de información</h2>
+        <p class="under"><a href="index.php?ver=paciente" class="link1">Registrar paciente</a><br />
+          </p>
+        <p class="under"><a href="index.php?ver=atencion" class="link1">Registrar atenci&oacute;n</a><br />
+          </p>
+        <p class="under"><a href="index.php?ver=resultados" class="link1">Registrar resultados</a><br />
+         </p>
+        <p class="under"><a href="index.php?ver=primir" class="link1">Imprimir resultados</a><br />
+         </p>
+          <p class="under"><a href="#" class="link1">Caja chica</a><br />
+         </p>
+         
+          <h2>Reportes</h2>
+        <p class="under"><a href="#" class="link1">Imprimir Carnet</a><br />
+          </p>
+        <p class="under"><a href="#" class="link1">Herramientas</a><br />
+          </p>
+        <p class="under"><a href="#" class="link1">Autorizar Resultados</a><br />
+         </p>        
+         
+         
+          <h2>Control de gastos</h2>
+        <p class="under"><a href="#" class="link1">Caja chica</a><br />
+          </p>
+          </div>
+    </article>
+      ';
+    
+
+
+
+?>
