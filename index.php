@@ -40,6 +40,7 @@ if (!($bandera)) {
 ?>
 
 <!DOCTYPE html>
+<meta charset="UTF-8">
 <html >
 <head>
 <script language="JavaScript" src="jsm/fecha.js" type="text/javascript">

@@ -2,7 +2,7 @@
 class admresultados extends bdlaboratorio {
 	function formulario1()
     {
-        $contenido = '<script type="text/javascript" src="js/buscar.js" ></script>';
+        $contenido = '<script type="text/javascript" src="js/buscarresultados.js" ></script>';
         $contenido .= '<style type="text/css">
 						.suggestionsBox {
 							position: relative;
@@ -33,27 +33,30 @@ class admresultados extends bdlaboratorio {
 					<form name="i" method="GET" action="index.php" >
 						<table>
 							<tr>
-								<th>
-									<h2>Ingresar el Tipo de resultado nuevo o que se quiere modificar</h2>
+								<th colspan=2>
+									<h2>Administración de Tipo de Resultados</h2>
+									<h3>Escoja primero categoria de analisis y luego el analisis especifico para mostrar los tipos de resultados dependientes</h3>
 								</th>
 							</tr>
 							<tr>
-								<td>' .$this->whoiam('buscar') . 'Buscar por:
-									<input type="radio" name="modo" value="nombre" checked>Nombre    
-									<input type="radio" name="modo" value="id">ID tipo analisis  
-								</td>
-							</tr>
-							<input type="hidden" name="tabla" value="tiporesultado">
-							<tr>
-								<td colspan="2">
-									<input autocomplete="off" type="text" id="nombre" name="nombre" onkeyup="lookup(this.value, document.i.modo, document.i.tabla.value);" >
+								<td>' .$this->whoiam('buscar') . 'Categoria:
+								<input autocomplete="off" type="text" id="nombre" name="nombre" onkeyup="lookup(this.value);" >
 									<div class="suggestionsBox" id="suggestions" style="display: none;">
 										<div class="suggestionList" id="autoSuggestionsList">
 											&nbsp;
 										</div>
 									</div>
+									</td>
+									<td>
+								Analisis:
+								<select  id="selectresultado" name="selectanalisis" onchange="mostrarresultados(this)">
+								</select>
+									
+									
 								</td>
 							</tr>
+							<input type="hidden" name="tablacat" value="categoriaanalisis">
+							<input type="hidden" name="tablaanalisis" value="analisisespecifico">
 							<tr>
 								<td>
 									<input type="submit" value="Buscar"/>

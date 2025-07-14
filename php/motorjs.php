@@ -189,9 +189,7 @@ class motorjs extends bdlaboratorio
             }
         }  
     }*/
-    function fadsfasd($buscar, $modo){
-        
-    }
+   
     function resultadosanteriores(){
         $id=$_GET['idpaciente'];
         $atencionesanteriores=$this->selectw("*","solicitud","estado=true and idpaciente=".$id);
@@ -202,8 +200,8 @@ class motorjs extends bdlaboratorio
             $res.="<tr><td><form name='anterior' action='' ><input type='submit' value='ver'></form></td><td>".$atencionanterior['fechacreacion']."</td><td>".$atencionanterior['diagnostico']."</td><td>".$atencionanterior['iddoctor']."</td></tr>";
         }
         $res.="</table>";
-
     } 
+    
 }
 $motorjs = new motorjs();
 $funcion = isset($_POST['funcion']) ? $_POST['funcion'] : '';
