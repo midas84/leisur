@@ -54,7 +54,7 @@ class bdlaboratorio
         }
         return $row;
     }
-    function select1($select, $from)
+    function showselect($select, $from)
     {
         $sql = 'select ' . $select . ' from ' . $from;
         return $sql;
@@ -73,7 +73,7 @@ class bdlaboratorio
         }
         return $row;
     }
-    function selectw1($select, $from, $where)
+    function showselectw($select, $from, $where)
     {
         $sql = 'select ' . $select . ' from ' . $from . ' where ' . $where;
         return $sql;

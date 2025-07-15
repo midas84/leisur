@@ -50,16 +50,16 @@ class admresultados extends bdlaboratorio {
 									<td>
 								Analisis:
 								<select  id="selectresultado" name="selectanalisis" onchange="mostrarresultados(this)">
+								<option value="" selected disabled>Escoge una opcion</option>
 								</select>
 									
 									
 								</td>
 							</tr>
-							<input type="hidden" name="tablacat" value="categoriaanalisis">
-							<input type="hidden" name="tablaanalisis" value="analisisespecifico">
+							
 							<tr>
 								<td>
-									<input type="submit" value="Buscar"/>
+									<div id="listaresultados"></div>
 								</td>
 							</tr>
 						</table>
@@ -68,14 +68,17 @@ class admresultados extends bdlaboratorio {
 					<form name="ii" method="GET" action="index.php">
 						<table>
 							<tr>
-								<td>' . $this->whoiam('todo') .
-									'<input type="submit" value="Mostrar Todas las categorias"/>
+								<td>' . $this->whoiam('formulariocrear') .
+									'<input type="submit" value="Crear nuevo tipo de resultados"/>
 								</td>
 							</tr>
 						</table>
 					</form>';
         return $contenido;
     }
+	function formulariocrear(){
+		return $this->formulario('','','','','','','','','');
+	}
 	function formulario($id, $nombre, $descripcion, $estado, $unidadmedicion, $parametroinferior, $parametrosuperior, $idanalisis, $accion){
 		$contenido='<form action="index.php" method="GET">';
 		if (!($id=='')){
@@ -91,7 +94,7 @@ class admresultados extends bdlaboratorio {
 					</tr>';
 		} 
 		else {
-			$contenido.='<h2>No existe el tipo de resultado se creara uno nuevo <br />Ingresar Nuevo tipo de resultado</h2>
+			$contenido.='<h2>Ingresar Nuevo tipo de resultado</h2>
 					<table>';
 		}
 		$contenido.='
