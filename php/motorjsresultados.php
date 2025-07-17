@@ -35,7 +35,7 @@ class motorjs extends bdlaboratorio
 
 			echo '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; width: 100%; max-width: 400px;">';
 			echo '  <span>' . htmlspecialchars($nombre, ENT_QUOTES, 'ISO-8859-1') . '</span>';
-			echo '<button type="button" onclick="window.location.href=\'index.php?ver=admtiporesultado&accion=buscar&modo=id&tabla=tiporesultado&nombre=' . $id . '\'">';
+			echo '<button class="botone" type="button" onclick="window.location.href=\'index.php?ver=admtiporesultado&accion=buscar&modo=id&tabla=tiporesultado&nombre=' . $id . '\'">';
 			echo 'Editar';
 			echo '</button>';
 			echo '</div>';

@@ -27,7 +27,7 @@ function lookup(inputString) {
 
 function fill(thisValue, idcategoria) {
   $("#nombre").val(thisValue);
-
+  listaderesultados="";
   setTimeout("$('#suggestions').hide();", 10);
   nombreanalisis = "analisisespecifico";
   $.post(
@@ -35,6 +35,7 @@ function fill(thisValue, idcategoria) {
     { buscar: idcategoria, funcion: nombreanalisis },
     function (data) {
       $("#selectresultado").html(data);
+	  $("#listaresultados").html(listaderesultados);
     }
   );
 }
