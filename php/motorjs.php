@@ -201,6 +201,15 @@ class motorjs extends bdlaboratorio
         }
         $res.="</table>";
     } 
+     function guardarresultadosautorizar($a, $b){
+        $cantidad=isset($_POST['cantidad']) ? $_POST['cantidad'] : 0;
+        for ($i=0; $i<$cantidad; $i++){
+                            $datos[$i]=isset($_POST["a".$i]) ? $_POST["a".$i] : '' ;
+                            $ids[$i]=isset($_POST["b".$i]) ? $_POST["b".$i] : '' ;
+                    }
+                    $this->modificarres($datos,$ids);
+        echo "la atencion se modifico correctamente";
+    }
     
 }
 $motorjs = new motorjs();
