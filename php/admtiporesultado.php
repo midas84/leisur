@@ -150,7 +150,6 @@ class admresultados extends bdlaboratorio
 	function buscar()
 	{
 		$nombre = isset($_GET["id"]) ? $_GET["id"] : ($nombre = isset($_GET["nombre"]) ? $_GET["nombre"] : '');
-		//$nombre=isset($_GET["nombre"]) ? $_GET["nombre"] : '';
 		$modo = isset($_GET["modo"]) ? $_GET["modo"] : 'nombre';
 		$idcategoria = isset($_GET["idanalisis"]) ? $_GET["idanalisis"] : '';
 		if (!($idcategoria == '')) {

@@ -804,7 +804,7 @@ $fecha = isset($_GET["fecha"]) ? $_GET["fecha"] : '';
 $precio = isset($_GET["precio"]) ? $_GET["precio"] : 0.0;
 $paquetes = isset($_GET["paquete"]) ? $_GET["paquete"] : array();
 $atencion = new admatencion();
-header('Content-type: text/html; charset=iso-8859-1');
+header('Content-Type: text/html; charset=utf-8');
 $contenido = '<div id="content" align="center"><div class="contactof">';
 switch ($accion) {
     case 'nuevo':

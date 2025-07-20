@@ -146,7 +146,7 @@ class admautorizar extends bdlaboratorio
         $this->mostrar();
     }
 }
-header('Content-type: text/html; charset=iso-8859-1');
+header('Content-type: text/html; charset=utf-8');
 $autorizar = new admautorizar();
 $autorizar->contenido =
     '<script type="text/javascript" src="js/detalles.js" ></script>

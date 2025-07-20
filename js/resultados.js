@@ -8,7 +8,7 @@ function hacer(){
 $.ajaxSetup({
 'beforeSend' : function(xhr) {
 try{
-xhr.overrideMimeType('text/html; charset=iso-8859-1');
+xhr.overrideMimeType('text/html; charset=utf-8');
 }
 catch(e){
  

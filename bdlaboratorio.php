@@ -27,6 +27,7 @@ class bdlaboratorio
     {
         $this->url = mysql_connect($this->host, $this->user, $this->pass);
         mysql_select_db($this->db, $this->url);
+        mysql_query("SET NAMES 'utf8'");
         return true;
     }
     //funci�n para destruir la conexi�n.

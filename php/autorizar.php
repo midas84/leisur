@@ -177,7 +177,7 @@ $total_paginas = ceil($total_resultados / $por_pagina);
         $this->mostrar();
     }
 }
-header('Content-type: text/html; charset=iso-8859-1');
+header('Content-Type: text/html; charset=utf-8');
 $autorizar = new admautorizar();
 $autorizar->contenido =
     '<script type="text/javascript" src="js/detalles.js" ></script>

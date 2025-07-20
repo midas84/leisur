@@ -5,7 +5,7 @@ class motorjs extends bdlaboratorio
 	function categoriaanalisis($buscar)
 	{
 		$modo = "nombre";
-		header('Content-type: text/html; charset=iso-8859-1');
+		
 		$result = $this->selectw('*', 'categoriaanalisis', "lower(" . $modo . ") LIKE lower('%" . $buscar . "%') LIMIT 10");
 		foreach ($result as $temp) {
 			$nombre = $temp['nombre'];
@@ -16,7 +16,7 @@ class motorjs extends bdlaboratorio
 	function analisisespecifico($buscar)
 	{
 		$modo = "idcategoria";
-		header('Content-type: text/html; charset=iso-8859-1');
+		
 		echo '<option value="" selected disabled>Escoge una opcion</option>';
 		$resultados = $this->selectw('distinct nombre, id', 'analisisespecifico', $modo . "=" . $buscar . " LIMIT 10");
 		foreach ($resultados as $resultado) {
@@ -26,7 +26,7 @@ class motorjs extends bdlaboratorio
 	function gettiporesultado($buscar)
 	{
 		$modo = "idanalisis";
-		header('Content-type: text/html; charset=iso-8859-1');
+		
 		//echo "<div>si llegamos</div>";
 		$result = $this->selectw('*', 'tiporesultado', $modo . "=" . $buscar);
 		foreach ($result as $temp) {
@@ -34,7 +34,7 @@ class motorjs extends bdlaboratorio
 			$nombre = $temp['nombre'];
 
 			echo '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; width: 100%; max-width: 400px;">';
-			echo '  <span>' . htmlspecialchars($nombre, ENT_QUOTES, 'ISO-8859-1') . '</span>';
+			echo '  <span>' . htmlspecialchars($nombre, ENT_QUOTES, 'utf-8') . '</span>';
 			echo '<button class="botone" type="button" onclick="window.location.href=\'index.php?ver=admtiporesultado&accion=buscar&modo=id&tabla=tiporesultado&nombre=' . $id . '\'">';
 			echo 'Editar';
 			echo '</button>';
@@ -42,6 +42,7 @@ class motorjs extends bdlaboratorio
 		}
 	}
 }
+header('Content-type: text/html; charset=charset=utf-8');
 $motorjs = new motorjs();
 $funcion = isset($_POST['funcion']) ? $_POST['funcion'] : '';
 $buscar = isset($_POST['buscar']) ? $_POST['buscar'] : '';

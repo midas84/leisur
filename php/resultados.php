@@ -17,7 +17,7 @@ class admresultados extends bdlaboratorio
         <tr>'.$this->whoiam('nuevo').'</table></form>'; 
     }
     function nuevo(){
-        header('Content-type: text/html; charset=iso-8859-1');  
+        
         $idatencion= isset($_GET['idatencion']) ? $_GET['idatencion'] : '';
 
         $todo=$this->todosolicitud($idatencion);    $accionenv='editar';
@@ -54,7 +54,7 @@ class admresultados extends bdlaboratorio
                     $this->nuevo();
     }
 }
-header('Content-type: text/html; charset=iso-8859-1');
+
 $resultados = new admresultados();
 $resultados->contenido =
     '<div id="content" align="center"><div class="contactof">';

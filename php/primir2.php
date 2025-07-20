@@ -98,7 +98,7 @@
 	            '" ><input type="hidden" name="accion" value="' . $accion . '" >';
 	    }
 	}
-	header('Content-type: text/html; charset=iso-8859-1');
+	header('Content-type: text/html; charset=utf-8');
 	$autorizar = new primir();
 	$autorizar->contenido =
 	    '<div id="content" align="center"><div class="contactof">';
