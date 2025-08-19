@@ -1,22 +1,14 @@
-$(function() {
-	
+$(function() {	
 	$('.hola').hide();
 	$('.hola').attr("value",false);
-	
-
-	$(".detalles").live("click", function() {
-		
-		punto='.hola#'+$(this).attr("id");	
-		
-		if ($(punto).attr("value")){		
-			
+	$(".detalles").live("click", function() {		
+		punto='.hola#'+$(this).attr("id");			
+		if ($(punto).attr("value")){				
 			$(punto).hide();
 			$(punto).attr("value",false);
-			$(punto).html('');
-			
+			$(punto).html('');			
 		}
-		else {
-			
+		else {		
 			$('.hola').attr("value",false);
 			$('.hola').hide();
 			$('.hola').html('');
@@ -32,8 +24,7 @@ $(function() {
 				$(punto).html("<td>"+data+"</td>");
 			} else {
 				$(punto).html("vacio");
-			}
-			
+			}	
 			});
 		}
 		return false;
@@ -49,10 +40,7 @@ $(function() {
   		//aqui debemos mandar el formulario
   		$.post("php/autorizacion.php", {idatencion:$("input#sol").attr("value"),accion:"autorizar2"}, function(data){
 			alert(data);
-		});
-  		//aqui borramos la tupla autorizada
-  		//$(this).parent().parent().parent().html('');
-  		//$('td#borra'+$("input#sol").attr("value")).html("autorizado");
+		});		
 		colorFondo = $('#banderaAutorizacion').css('background-color');
 		if(colorFondo=='green'){
 			$('#banderaAutorizacion').css('background-color')='red';
@@ -65,8 +53,7 @@ $(function() {
   	$("#corregir").live("click", function(){
   		$.post("php/motorjs.php",$("#formdet").serialize(), function(data){
   			alert(data);
-  		})
-  		
+  		})  		
   		return false;
   	})
 });

@@ -41,7 +41,9 @@ class admresultados extends bdlaboratorio
             '<input type="hidden" name="b'.$i.'" value="'.$resultados[$i]['id'].'"></td></tr>';
         }
         $this->contenido.= '<input name="cantidad" type="hidden" value="'.count($resultados).'">'.$this->whoiam('guardar').'
-        <tr><td colspan=4><center><input  id="guardar" type="submit" value="Guardar" /></center></td>
+        <tr><td colspan=4><center><input  id="guardar" type="submit" value="Guardar" /><input id="enviarauto" value="Autorizar" type="submit" onclick="h(); return false;" disabled="true" />
+		<input type="checkbox" id="autorizar" />
+        <input id="enviarauto" value="Imprimir" type="submit" onclick="h(); return false;" disabled="true" /></center></td>
         </tr></table></form>';
     }
     function guardar(){
@@ -57,7 +59,8 @@ class admresultados extends bdlaboratorio
 
 $resultados = new admresultados();
 $resultados->contenido =
-    '<div id="content" align="center"><div class="contactof">';
+    '<script type="text/javascript" src="js/detalles.js" ></script>
+    <div id="content" align="center"><div class="contactof">';
 
 $accion = isset($_GET["accion"]) ? $_GET["accion"] : 'defaul';
 $resultados->$accion();

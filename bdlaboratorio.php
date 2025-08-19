@@ -398,7 +398,7 @@ class bdlaboratorio
     function todosolicitud($idsol)
     {
         return $this->selectw(
-            'doctor.nombre nombredoctor,doctor.id iddoctor , paciente.ci ci, paciente.edad edad, categoriaanalisis.nombre categoria, solicitud.autorizado, paciente.nombres nombres, paciente.apellidos apellidos, solicitud.fechacreacion fecha, solicitud.atenciondia numerodia, solicitud.diagnostico diagnostico, analisisespecifico.nombre analisis, analisisespecifico.id idana, solicitud.preciototalestimado precio',
+            'paciente.fechanacimiento fechanacimiento, doctor.nombre nombredoctor,doctor.id iddoctor , paciente.ci ci, paciente.edad edad, categoriaanalisis.nombre categoria, solicitud.autorizado, paciente.nombres nombres, paciente.apellidos apellidos, solicitud.fechacreacion fecha, solicitud.atenciondia numerodia, solicitud.diagnostico diagnostico, analisisespecifico.nombre analisis, analisisespecifico.id idana, solicitud.preciototalestimado precio',
             'solicitud 
             INNER JOIN paciente ON paciente.id = solicitud.idpaciente 
             INNER JOIN atencion ON atencion.idsolicitud = solicitud.id 
@@ -499,12 +499,12 @@ class bdlaboratorio
     }
     function autorizar($idatencion)
     {
-        $re = $this->selectw('*', 'solicitud', 'id=' . $idatencion);
-        if ($re[0]['autorizado']) {
-            $this->update('solicitud', 'autorizado=false', 'id=' . $idatencion);
-        } else {
+        //$re = $this->selectw('*', 'solicitud', 'id=' . $idatencion);
+        //if ($re[0]['autorizado']) {
+        //    $this->update('solicitud', 'autorizado=false', 'id=' . $idatencion);
+        //} else {
             $this->update('solicitud', 'autorizado=true', 'id=' . $idatencion);
-        }
+        //}
     }
     function seleccionardoctor($doctor1)
     {

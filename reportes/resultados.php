@@ -102,6 +102,17 @@ td.sep {
     $cab = $cab.cabecera($todo,  $idsol);
     function cabecera($todo,  $idsol)
     {
+        $edad = "" ;
+        $fechaNacimiento = new DateTime($todo[0]['fechanacimiento']);
+        $hoy = new DateTime();
+
+        $diferencia = $hoy->diff($fechaNacimiento);
+
+        if ($diferencia->y >= 1) {
+            $edad = $diferencia->y . " a&ntilde;os";
+        } else {
+            $edad = $diferencia->m . " meses " . $diferencia->d . " d&iacute;as";
+        }
         if ($todo[0]['ci'] == '') {
             $ci = "-";
         } else {
@@ -113,11 +124,11 @@ td.sep {
     
         return  ' 
             <div id="cabecera">
-            <div style="width: 400px; display: inline-block;">Paciente:' . $todo[0]['nombres'] .
+            <div style="width: 350px; display: inline-block;">Paciente:' . $todo[0]['nombres'] .
             ' ' . $todo[0]['apellidos'] .
             '<br>CI:' . $ci .
             '<br> Doctor: '.$todo[0]['nombredoctor'].'
-            </div><div style=" display: inline-block;">Edad:' . $todo[0]['edad'] . '<br>Pac./d&iacute;a. :' . $todo[0]['numerodia'] .
+            </div><div style=" display: inline-block;">Edad:' . $edad . '<br>Pac./d&iacute;a. :' . $todo[0]['numerodia'] .
             '<br>Fecha:' . $todo[0]['fecha'] . '</div></div>
             <img id="logo" src="logo.jpg" />
                         <img id="titulo" src="titulo.jpg" />
