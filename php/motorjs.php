@@ -105,13 +105,13 @@ class motorjs extends bdlaboratorio
         }
         echo '<input type="hidden" value="guardarresultadosautorizar" name="funcion" /><input name="cantidad" type="hidden" value="' . count($resultados) . '">
 		<tr><td></td><td><input  id="corregir" type="submit" value="Guardar" /></td>
-		<td><input id="enviarauto" value="Autorizar" type="submit" onclick="h(); return false;" disabled="true" />
+		<td><input id="enviarauto" value="Autorizar" type="submit" onclick="return false;" disabled="true" />
 		<input type="checkbox" id="autorizar" /></td>
         <td>';
-        if ($('#banderaAutorizacion').css('background-color')=="green"){
-            echo '<input id="imprimir" value="Imprimir" type="submit" onclick="h(); return false;"  /></td></tr></table></form>';
+        if (  $todo[0]['autorizado'] == true){
+            echo '<input id="imprimir" value="Imprimir" type="submit" onclick="return false;" /></td></tr></table></form>';
         } else {
-            echo '<input id="imprimir" value="Imprimir" type="submit" onclick="h(); return false;" disabled="true" /></td></tr></table></form>';
+            echo '<input id="imprimir" value="Imprimir" type="submit" onclick="return false;" disabled="true" /></td></tr></table></form>';
         }    
     }
 

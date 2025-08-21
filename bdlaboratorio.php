@@ -496,15 +496,19 @@ class bdlaboratorio
         for ($i = 0; $i < count($datos); $i++) {
             $this->update('resultados', "valor='" . $datos[$i] . "'", 'id=' . $ids[$i]);
         }
+        $idatencion=$this->selectw(
+            'idatencion',
+            'resultados',
+            'id='.$ids[0]);
+            $this->desautorizar($idatencion);
     }
     function autorizar($idatencion)
     {
-        //$re = $this->selectw('*', 'solicitud', 'id=' . $idatencion);
-        //if ($re[0]['autorizado']) {
-        //    $this->update('solicitud', 'autorizado=false', 'id=' . $idatencion);
-        //} else {
-            $this->update('solicitud', 'autorizado=true', 'id=' . $idatencion);
-        //}
+        $this->update('solicitud', 'autorizado=true', 'id=' . $idatencion);
+    }
+    function desautorizar($idatencion)
+    {
+        $this->update('solicitud', 'autorizado=false', 'id=' . $idatencion);
     }
     function seleccionardoctor($doctor1)
     {
