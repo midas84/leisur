@@ -21,9 +21,10 @@ $(function () {
         "php/motorjs.php",
         { buscar: inputString, funcion: tabla, modo: elegido },
         function (data) {
-          console.log(data);
+          
           if (data.length > 0) {
-            $(punto).html(data);
+            console.log(data);
+            $(punto).html("<td>"+data+"</td>");
           } else {
             $(punto).html("vacio");
           }

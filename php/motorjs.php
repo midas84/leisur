@@ -87,16 +87,18 @@ class motorjs extends bdlaboratorio
     }
     function verdetalles($buscar, $modo)
     {
-
+        header('Content-type: text/html; charset=iso-8859-1');	
         $idatencion = $buscar;
         $todo = $this->todosolicitud($idatencion);
         $accionenv = 'editar';
+        
         echo '<form name="detalle" id="formdet" method="POST">
-        <table><input type="hidden" id="sol" name="idatencion" value=	"' . $idatencion . '"/>';
-
+        <table><input type="hidden" id="sol" name="idatencion" value=	"'.$idatencion.'"/>';
+		
         echo '<input type="hidden" name="accion" value="autorizar2" >';
 
         echo '<tr><th>analisis</th><th>Resultado</th><th>Valor</th><th colspan="2">Parametro</th></tr>';
+        
         $resultados = $this->resultados($idatencion);
         for ($i = 0; $i < count($resultados); $i++) {
             echo '<tr><td>' . $resultados[$i]['analisis'] . '</td><td>' . $resultados[$i]['resultado'] . '</td>
@@ -108,11 +110,13 @@ class motorjs extends bdlaboratorio
 		<td><input id="enviarauto" value="Autorizar" type="submit" onclick="return false;" disabled="true" />
 		<input type="checkbox" id="autorizar" /></td>
         <td>';
-        if (  $todo[0]['autorizado'] == true){
+        if ($todo[0]['autorizado'] == true) {
             echo '<input id="imprimir" value="Imprimir" type="submit" onclick="return false;" /></td></tr></table></form>';
         } else {
             echo '<input id="imprimir" value="Imprimir" type="submit" onclick="return false;" disabled="true" /></td></tr></table></form>';
-        }    
+        }
+        echo '</table>';
+        echo '</form>';
     }
 
 
