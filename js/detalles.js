@@ -21,10 +21,8 @@ $(function () {
         "php/motorjs.php",
         { buscar: inputString, funcion: tabla, modo: elegido },
         function (data) {
-          
           if (data.length > 0) {
-            console.log(data);
-            $(punto).html("<td>"+data+"</td>");
+            $(punto).html("<td>" + data + "</td>");
           } else {
             $(punto).html("vacio");
           }
@@ -42,21 +40,31 @@ $(function () {
   });
   $("#enviarauto").live("click", function () {
     //aqui debemos mandar el formulario
-    $.post("php/autorizacion.php",{ idatencion: $("input#sol").attr("value"), accion: "autorizar2" },(data) => alert(data));
+    $.post(
+      "php/autorizacion.php",
+      { idatencion: $("input#sol").attr("value"), accion: "autorizar2" },
+      (data) => alert(data)
+    );
 
-
-	 $("#ab"+$("input#sol").attr("value")).find("#banderaAutorizacion").css("background-color", "green").text("autorizado");
-	$("#imprimir").prop("disabled", false);
-
+    $("#ab" + $("input#sol").attr("value"))
+      .find("#banderaAutorizacion")
+      .css("background-color", "green")
+      .text("autorizado");
+    $("#imprimir").prop("disabled", false);
 
     return false;
   });
   $("#corregir").live("click", function () {
-	console.log('hola');
-	console.log($("#formdet").serialize());
-    //$.post("php/motorjs.php", $("#formdet").serialize(), function (data) {
-    //  alert(data);
-    //});
+    $.post("php/motorjs.php", $("#formdet").serialize(), function (data) {
+      alert(data);
+      $("#ab" + $("input#sol").attr("value"))
+        .find("#banderaAutorizacion")
+        .css("background-color", "red")
+        .text("No autorizado");
+      $("#imprimir").prop("disabled", true);
+      $("input#autorizar").prop("checked", false);
+      $("input#enviarauto").attr("disabled", true);
+    });
     return false;
   });
   $("#imprimir").live("click", () => {

@@ -496,19 +496,20 @@ class bdlaboratorio
         for ($i = 0; $i < count($datos); $i++) {
             $this->update('resultados', "valor='" . $datos[$i] . "'", 'id=' . $ids[$i]);
         }
-        $idatencion=$this->selectw(
-            'idatencion',
-            'resultados',
-            'id='.$ids[0]);
-            $this->desautorizar($idatencion);
+        $idatencion = $this->selectw(
+            'idsolicitud',
+            'resultados inner join atencion on resultados.idatencion=atencion.id',
+            'resultados.id=' . $ids[0]
+        );
+        $this->desautorizar($idatencion[0]['idsolicitud']);
     }
-    function autorizar($idatencion)
-    {
-        $this->update('solicitud', 'autorizado=true', 'id=' . $idatencion);
+    function autorizar($idsolicitud)
+    { 
+        $this->update('solicitud', 'autorizado=1', 'id=' . $idsolicitud);
     }
-    function desautorizar($idatencion)
-    {
-        $this->update('solicitud', 'autorizado=false', 'id=' . $idatencion);
+    function desautorizar($idsolicitud)
+    {  
+        $this->update('solicitud', 'autorizado=0', 'id=' . $idsolicitud);
     }
     function seleccionardoctor($doctor1)
     {

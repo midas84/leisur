@@ -87,7 +87,7 @@ class motorjs extends bdlaboratorio
     }
     function verdetalles($buscar, $modo)
     {
-        header('Content-type: text/html; charset=iso-8859-1');	
+        header('Content-Type: text/html; charset=utf-8');
         $idatencion = $buscar;
         $todo = $this->todosolicitud($idatencion);
         $accionenv = 'editar';
