@@ -53,7 +53,7 @@ class admresultados extends bdlaboratorio
 	}
 	function formulariocrear()
 	{
-		return $this->formulario('', '', '', '', '', '', '', '', '');
+		return $this->formulario('', '', '', '', '', '', '', '', 'crear');
 	}
 	function formulario($id, $nombre, $descripcion, $estado, $unidadmedicion, $parametroinferior, $parametrosuperior, $idanalisis, $accion)
 	{
@@ -139,9 +139,14 @@ class admresultados extends bdlaboratorio
 						</tr>
 						<tr>' . $this->whoiam($accion) .
 			'
-							<td colspan="2">
+							<td >
 								<input type="submit" value="Guardar"/>
+
 							</td>
+							<td>
+							<input type="submit" value="borrar"/>
+							</td>
+
 						</tr>
 					</table></form>';
 
@@ -178,6 +183,7 @@ class admresultados extends bdlaboratorio
 		$estado = isset($_GET["estado"]) ? $_GET["estado"] : true;
 		$id = isset($_GET["id"]) ? $_GET["id"] : "";
 		$res = "";
+		echo 'holaaaaaaaaaaaaaaaaaaa'.$nombre;
 		$c = $this->update('tiporesultado', "nombre='" . $nombre . "', descripcion='" . $descripcion . "',
 		 estado=" . $estado . ", unidadmedicion='" . $unidadmedicion . "', 
 		 parametroinferior='" . $parametroinferior . "', parametrosuperior='" . $parametrosuperior . "',
@@ -228,7 +234,7 @@ class admresultados extends bdlaboratorio
 		foreach ($temp1 as $temp2) {
 			$rs .= '<tr><td>';
 			$rs .= '<form method="GET" name="editar' . $i . '" action="index.php">' . $this->
-				whoiam('buscar') . '<input type="hidden" name="nombre" value="' . $temp2['nombre'] .
+				whoiam('buscar') . '<input type="hidden" name="nombrea" value="' . $temp2['nombre'] .
 				'"><input type="hidden" name="modo" value="nombre"><a title="Click para editar" href="javascript:document.editar' . $i .
 				'.submit();">' . $i . '</a></form></td><td>' . $temp2['nombre'] . '</td><td>' . $temp2['descripcion'] .
 				'</td><td>';
@@ -264,7 +270,7 @@ class admresultados extends bdlaboratorio
 				}
 			}
 		}
-		$res = '<input autocomplete="off" type="text" id="nombre" name="nombre" value="' . $categoria . '" onkeyup="lookup(this.value);" >
+		$res = '<input autocomplete="off" type="text" id="nombre" name="nombrec" value="' . $categoria . '" onkeyup="lookup(this.value);" >
 				<div class="suggestionsBox" id="suggestions" style="display: none;">
 					<div class="suggestionList" id="autoSuggestionsList">
 					&nbsp;
