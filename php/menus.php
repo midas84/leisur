@@ -22,13 +22,7 @@ echo'
       <li><a href="index.php?ver=admres">Adm. Resultados </a></li>
     </ul>
   </li>
-  <li><a href="index.php?ver=autorizar"> Resultados </a>
-    <ul> 
-      <li><a href="index.php?ver=autorizar">Autorizar</a></li>
-      <li><a href="index.php?ver=resultados">Registrar</a></li>
-      <li><a href="index.php?ver=primir">Imprimir</a></li>
-    </ul>
-  </li>
+  
   <li><a href="#"> Reportes </a>
     <ul> 
       <li><a href="#">Atendidos</a></li>
@@ -44,23 +38,7 @@ echo'
       <li><a href="index.php?ver=admanalisisespec">Adm. Analisis Especificos</a></li>
     </ul>
   </li>
-  <li>
-    <a href="#">Caja chica </a>
-    <ul>
-      <li><a href="#">Entradas</a></li>
-      <li><a href="#">Salidas</a></li>
-      <li><a href="#">Resumen</a></li>
-    </ul>
-  </li>
   
-  <li>
-    <a href="#"> Usuarios </a>
-    <ul>
-      <li><a href="URL_enlace_2.1">texto_submen�_2.1</a></li>
-      <li><a href="URL_enlace_2.2"> texto_submen�_2.2 </a></li>
-      <li><a href="URL_enlace_2.3"> texto_submen�_2.3 </a></li>
-    </ul>
-  </li>
 </ul>
 
 

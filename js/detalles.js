@@ -69,7 +69,7 @@ $(function () {
   });
   $("#imprimir").live("click", () => {
     window.open(
-      "http://localhost/laboratorio1.0/reportes/resultados.php?idsol=1065116",
+      "http://localhost/laboratorio1.0/reportes/resultados.php?idsol="+$("input#sol").attr("value"),
       "_blank"
     );
   });

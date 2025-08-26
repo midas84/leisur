@@ -23,7 +23,7 @@ class admresultados extends bdlaboratorio
         $todo=$this->todosolicitud($idatencion);    $accionenv='editar';
         
         $this->contenido.= '<form name="resultados" action="index.php" method="GET" ><table border="1" >
-        <tr><th colspan="4" align="center">
+        <tr><th colspan="4" align="center"><input type="hidden" id="sol" name="idatencion" value=	"'.$idatencion.'"/>
         <input type="hidden" name="idatencion" value="'.$idatencion.'"/>Ficha de atencion</th></tr>
         <tr><td><img width="200" src="http://localhost/laboratorio1.0/reportes/codigob.php?codigo='.$idatencion.'"></td>
         <td>nombrepaciente: '.$todo[0]['nombres'].$todo[0]['apellidos'].'</td></tr>
@@ -43,8 +43,12 @@ class admresultados extends bdlaboratorio
         $this->contenido.= '<input name="cantidad" type="hidden" value="'.count($resultados).'">'.$this->whoiam('guardar').'
         <tr><td colspan=4><center><input  id="guardar" type="submit" value="Guardar" /><input id="enviarauto" value="Autorizar" type="submit" onclick="h(); return false;" disabled="true" />
 		<input type="checkbox" id="autorizar" />
-        <input id="enviarauto" value="Imprimir" type="submit" onclick="h(); return false;" disabled="true" /></center></td>
-        </tr></table></form>';
+        ';
+        if ($todo[0]['autorizado'] == true) {
+            $this->contenido.=  '<input id="imprimir" value="Imprimir" type="submit" onclick="return false;" /></center></td></tr></table></form>';
+        } else {
+            $this->contenido.=  '<input id="imprimir" value="Imprimir" type="submit" onclick="return false;" disabled="true" /></center></td></tr></table></form>';
+        }
     }
     function guardar(){
         $cantidad=isset($_GET['cantidad']) ? $_GET['cantidad'] : 0;

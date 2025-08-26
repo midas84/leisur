@@ -1,7 +1,7 @@
  <?php
     require_once("dompdf/dompdf_config.inc.php");
     $id = 4000;
-    $cab = '<title>laboratorio celldiagnostic</title>
+    $cab = '<head><meta charset="UTF-8"><title>laboratorio celldiagnostic</title>
   <style type="text/css">
  
 @page { margin: 1cm 2cm 0.5cm 2cm;} 
@@ -30,6 +30,7 @@
 		width: 2.2cm;
 	}
   #ho{
+  width: 100%;
     position: absolute;
     top: 3.7cm;
     left: 0cm;	
@@ -225,28 +226,28 @@ td.sep {
                 $pa = 3;
             }
             $pa++;
-            $cab = $cab .  '<tr><th>' . $resultados[$i]['analisis'] .
-                '</th><th colspan="2"></th></tr>';
+            $cab = $cab .  '<tr><th><u>' . $resultados[$i]['analisis'] .
+                '</u></th><th colspan="2"></th></tr>';
             $pa++;
-            $cab=$cab.'<tr ><th style="width: 200px;">Prueba</th><th style="width: 200px;">Resultado</th><th style="width: 200px;">Parametro</th></tr>';
+            $cab=$cab.'<tr ><th style="width: 33%;">Prueba</th><th align="center" valign="middle" style="width: 34%;">Resultado</th><th align="center" valign="middle" style="width: 33%;">Parametro</th></tr>';
                 }
             if (!(($resultados[$i]['valor'] == '')||($resultados[$i]['valor'] == ' '))) {
                 $pa++;
                     
         
         
-                $cab = $cab . '<tr><td>' . $resultados[$i]['resultado'] .
+                $cab = $cab . '<tr><td >' . $resultados[$i]['resultado'] .
                     '</td>';
         
                 if ((($resultados[$i]['parametroinferior']=='0')&&($resultados[$i]['parametrosuperior']=='0'))||(($resultados[$i]['parametroinferior']=='')||($resultados[$i]['parametroinferior']==''))){
         
               
-                   $cab = $cab . '<td colspan="2">' . $resultados[$i]['valor'] . ' ' . $resultados[$i]['unidadmedicion'] .'</td>';
+                   $cab = $cab . '<td align="center" valign="middle" >' . $resultados[$i]['valor'] . ' ' . $resultados[$i]['unidadmedicion'] .'</td>';
                    
                 }else{
-                    $cab = $cab . '<td>' . $resultados[$i]['valor'] . ' ' . $resultados[$i]['unidadmedicion'] .
+                    $cab = $cab . '<td align="center" valign="middle">' . $resultados[$i]['valor'] . ' ' . $resultados[$i]['unidadmedicion'] .
                     '</td>';
-                    $cab=$cab.'<td>' . $resultados[$i]['parametroinferior'] . ' - ' . $resultados[$i]['parametrosuperior'].' '.$resultados[$i]['unidadmedicion'].'</td>';
+                    $cab=$cab.'<td align="center" valign="middle">' . $resultados[$i]['parametroinferior'] . ' - ' . $resultados[$i]['parametrosuperior'].' '.$resultados[$i]['unidadmedicion'].'</td>';
                 }
               $cab=$cab.'</tr>';
             }
