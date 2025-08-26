@@ -37,12 +37,12 @@
 #pie{
     position: absolute;
     top: 24 cm;
-    left: 0 cm	
+    left: 0.5 cm	
   }
     #direcciones{
     position: absolute;
     top: 0 cm;	
-    left: 12.5cm;
+    left: 12cm;
   }
     #facebook, #instagram, #lugar{
     position: absolute;
@@ -100,19 +100,22 @@ td.sep {
     $base = new bdlaboratorio();
     $todo = $base->todosolicitud($idsol);
     $cab = $cab.cabecera($todo,  $idsol);
+    
     function cabecera($todo,  $idsol)
     {
-        $edad = "" ;
-        $fechaNacimiento = new DateTime($todo[0]['fechanacimiento']);
+        
+        $nacimiento = new DateTime($todo[0]['fechanacimiento']);
         $hoy = new DateTime();
-
-        $diferencia = $hoy->diff($fechaNacimiento);
-
-        if ($diferencia->y >= 1) {
-            $edad = $diferencia->y . " a&ntilde;os";
-        } else {
-            $edad = $diferencia->m . " meses " . $diferencia->d . " d&iacute;as";
+        $diferencia = $hoy->diff($nacimiento);
+        if ($diferencia->y >= 1)
+        {
+            $edad= $diferencia->y. " a&ntilde;os";
+        } 
+        else 
+        {
+            $edad= $diferencia -> m . " meses " .  $diferencia->d . " d&iacute;as ";
         }
+
         if ($todo[0]['ci'] == '') {
             $ci = "-";
         } else {
@@ -124,7 +127,7 @@ td.sep {
     
         return  ' 
             <div id="cabecera">
-            <div style="width: 350px; display: inline-block;">Paciente:' . $todo[0]['nombres'] .
+            <div style="width: 370px; display: inline-block;">Paciente:' . $todo[0]['nombres'] .
             ' ' . $todo[0]['apellidos'] .
             '<br>CI:' . $ci .
             '<br> Doctor: '.$todo[0]['nombredoctor'].'
@@ -137,9 +140,9 @@ td.sep {
             <br>
             <img id="marca" src="logo.jpg"  /><img id="instagram" src="instagramico.jpg" ><img id="facebook" src="facebookico.jpg" >
             <img id="lugar" src="lugarico.jpg" >
-            <div id="direcciones" font-size: 13px; >Cel.:76116115 <br /> cell.diagnostic@gmail.com <br />Reg.SEDES CH. N. 10/2024 </div>
+            <div id="direcciones" font-size: 13px; >75777151 / 76123455 <br /> cell.diagnostic.sc@gmail.com </br>Reg. SEDES: 242/RC/705/NII</div>
             <div id="pie" style="font-size: 13px;" >
-            <div id="fechaimpresion">Fecha de impresi&oacute;n: '.$fechadeimpresion.'</div><hr /> <div style=" padding-left: 20px;">Sucre: Destacamento 111 No. 165; Descatamento 130 No. 296A <br/>Santa Cruz: Calle Cuellar No. 152 entre 21 de Mayo y Libertad <br /> @laboratoriocelldiagnostic <br />  Laboratorio Cell-Diagnostic </div></diV>
+            <div id="fechaimpresion">Fecha de impresi&oacute;n: '.$fechadeimpresion.'</div><hr /> <div style=" padding-left: 20px;"></div>Santa Cruz: Calle Cuellar No. 152 entre 21 de Mayo y Libertad <br>Sucre: Destacamento 111 No. 165; Descatamento 130 No. 296A <br /> @laboratoriocelldiagnostic <br />  Laboratorio Cell-Diagnostic SC </div></diV>
             <table id="ho">';
     }
 
@@ -162,6 +165,13 @@ td.sep {
     $matrixPointSize = 3;
     $mensajeqr = 'Cell-Diagnostic Paciente: ' . $todo[0]['nombres'] . ' ' . $todo[0]['apellidos'] . 'ci:' . $todo[0]['ci'] . ' solicitud: ' . $idsol . ' fecha: ' . $todo[0]['fecha'] . ' Edad:' . $todo[0]['edad'];
      $bandera = false;
+
+
+
+
+
+     // aqui se elabora el contenido del qr
+
     for ($i = 0; $i < count($todo); $i++) {
         if (($todo[$i]['idana']==226)||($todo[$i]['idana']==227)||($todo[$i]['idana']==228)||($todo[$i]['idana']==229)||($todo[$i]['idana']==237)){
             $bandera=true;
@@ -181,28 +191,26 @@ td.sep {
              }	
         }
     }
-
     $matrixPointSize = min(max(10, 1), 10);
     $filename = $PNG_TEMP_DIR . 'test' . md5($mensajeqr . '|' . $errorCorrectionLevel . '|' . $matrixPointSize) . '.png';
     QRcode::png($mensajeqr, $filename, $errorCorrectionLevel, $matrixPointSize, 2);
-    //display generated file
-    $cab = $cab . '<img id="qr" src="' . $PNG_WEB_DIR . basename($filename) . '" />';
-
-    //qr
-
+    $banderaprimerapagina=true;
     for ($i = 0; $i < count($resultados); $i++) {
         $array = explode("<br>", $resultados[$i]['valor']);
-        $lineasporparametrosuperiorinferior= substr_count($resultados[$i]['parametrosuperior'], "<br>")+substr_count($resultados[$i]['parametroinferior'], "<br>");
-        $pa = $pa + count($array)+$lineasporparametrosuperiorinferior - 1;  //esto aumenta el numero de filas que tiene en total el valor del resultado
+        $pa = $pa + count($array) - 1;  //esto aumenta el numero de filas que tiene en total el valor del resultado
         if (($i == 0) || ($resultados[$i]['analisis'] != $resultados[$i - 1]['analisis'])) {
             if (($i == 0) || ($resultados[$i]['categoria'] != $resultados[$i - 1]['categoria'])) {
 
-                if ($pa >= 37) {
+                if ($banderaprimerapagina) {
+                    $banderaprimerapagina=false;
+                    $cab = $cab . '<img id="qr" src="' . $PNG_WEB_DIR . basename($filename) . '" />';//aqui añador el qr agregarlo en la cabezera
+                }
+                else {
                     $pagina++;
                     $cab = $cab . '</table>';
                     $cab = $cab . '<div style="page-break-before: always;"></div>';
                     $cab = $cab . cabecera($todo, $idsol);
-                    
+                    $cab = $cab . '<img id="qr" src="' . $PNG_WEB_DIR . basename($filename) . '" />';//aqui añador el qr agregarlo en la cabezera
                     $pa = 3;
                 }
                 $pa++; 
@@ -210,20 +218,18 @@ td.sep {
                     '</center></th></tr>';
             }
             if ($pa >= 37) {
-                    $pagina++;
-                    $cab = $cab . '</table>';
-                    $cab = $cab . '<div style="page-break-before: always;"></div>';
-                    $cab = $cab . cabecera($todo, $idsol);   
-                    $pa = 3;
-                }
-
-                $pa++;
-
-                $cab = $cab .  '<tr><th>' . $resultados[$i]['analisis'] .
-                    '</th><th colspan="2"></th></tr>';
-                     $pa++;
-                    $cab=$cab.'<tr ><th style="width: 200px;">Prueba</th><th style="width: 200px;">Resultado</th><th style="width: 200px;">Parametro</th></tr>';
+                $pagina++;
+                $cab = $cab . '</table>';
+                $cab = $cab . '<div style="page-break-before: always;"></div>';
+                $cab = $cab . cabecera($todo, $idsol);
+                $pa = 3;
             }
+            $pa++;
+            $cab = $cab .  '<tr><th>' . $resultados[$i]['analisis'] .
+                '</th><th colspan="2"></th></tr>';
+            $pa++;
+            $cab=$cab.'<tr ><th style="width: 200px;">Prueba</th><th style="width: 200px;">Resultado</th><th style="width: 200px;">Parametro</th></tr>';
+                }
             if (!(($resultados[$i]['valor'] == '')||($resultados[$i]['valor'] == ' '))) {
                 $pa++;
                     
@@ -253,12 +259,7 @@ td.sep {
                 
                 $pa = 3;
         
-        //$mensajeqr = 'Laboratorio: Cell-Diagnostic nombre Paciente: '. $todo[0]['nombres'] .' ' . $todo[0]['apellidos'].' solicitud: '. $idsol. ' fecha: '. $todo[0]['fecha'] . ' Edad:' . $todo[0]['edad'] . ' atencion del dia: '.$todo[0]['numerodia'];
-        $matrixPointSize = min(max(10, 1), 10);
-        $filename = $PNG_TEMP_DIR . 'test' . md5($mensajeqr . '|' . $errorCorrectionLevel . '|' . $matrixPointSize) . '.png';
-        QRcode::png($mensajeqr, $filename, $errorCorrectionLevel, $matrixPointSize, 2);
-        //display generated file
-        $cab = $cab . '<img id="qr" src="' . $PNG_WEB_DIR . basename($filename) . '" />';  
+        
             }
         }
         
