@@ -77,7 +77,7 @@ class bdlaboratorio
     function showselectw($select, $from, $where)
     {
         $sql = 'select ' . $select . ' from ' . $from . ' where ' . $where;
-        return $sql;
+        echo $sql;
     }
     function update($update, $set, $where)
     {
@@ -486,8 +486,8 @@ class bdlaboratorio
     function resultados($idatencion)
     {
         return $this->selectw(
-            'tipomuestra.nombre muestra, categoriaanalisis.nombre categoria, tiporesultado.nombre resultado, analisisespecifico.nombre analisis, resultados.valor, resultados.id, tiporesultado.unidadmedicion, tiporesultado.parametroinferior, tiporesultado.parametrosuperior',
-            'resultados INNER JOIN atencion ON resultados.idatencion = atencion.id INNER JOIN analisisespecifico ON atencion.idanalisis = analisisespecifico.id inner join tiporesultado on tiporesultado.id = resultados.idtiporesultado inner join categoriaanalisis on categoriaanalisis.id=analisisespecifico.idcategoria inner join tipomuestra on tipomuestra.id = tiporesultado.idtipomuestra',
+            ' categoriaanalisis.nombre categoria, tiporesultado.nombre resultado, analisisespecifico.nombre analisis, resultados.valor, resultados.id, tiporesultado.unidadmedicion, tiporesultado.parametroinferior, tiporesultado.parametrosuperior',
+            'resultados INNER JOIN atencion ON resultados.idatencion = atencion.id INNER JOIN analisisespecifico ON atencion.idanalisis = analisisespecifico.id inner join tiporesultado on tiporesultado.id = resultados.idtiporesultado inner join categoriaanalisis on categoriaanalisis.id=analisisespecifico.idcategoria',
             'atencion.idsolicitud=' . $idatencion
         );
     }
