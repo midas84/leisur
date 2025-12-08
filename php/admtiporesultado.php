@@ -1,4 +1,5 @@
 <?php
+
 class admresultados extends bdlaboratorio
 {
 	function formulario1()
@@ -33,7 +34,7 @@ class admresultados extends bdlaboratorio
 							</tr>
 							
 							<tr>
-								<td>
+								<td colspan="3">
 									<div id="listaresultados"></div>
 								</td>
 							</tr>
@@ -51,12 +52,15 @@ class admresultados extends bdlaboratorio
 					</form>';
 		return $contenido;
 	}
+
 	function formulariocrear()
 	{
-		return $this->formulario('', '', '', '', '', '', '', '', 'crear');
+		return $this->formulario('', '', '', '', '', '', '', '', '', 'crear');
 	}
-	function formulario($id, $nombre, $descripcion, $estado, $unidadmedicion, $parametroinferior, $parametrosuperior, $idanalisis, $accion)
+
+	function formulario($id, $nombre, $descripcion, $estado, $unidadmedicion, $parametroinferior, $parametrosuperior, $filacompleta, $idanalisis, $accion)
 	{
+
 		$contenido = '<form action="index.php" method="GET">';
 		if (!($id == '')) {
 			$contenido .= '<h2>Tipo de resultado encontrado <br />Editar Tipo de Resultado</h2>
@@ -123,6 +127,24 @@ class admresultados extends bdlaboratorio
 							<textarea name="parametrosuperior" rows="4" cols="50">' . $parametrosuperior . '</textarea> 
 						</td>
 					</tr>
+					<tr><td colspan=2>Aqui se debe seleccionar el modo en el que funcionara el resultado, solo la primera opción colocara referencias, estara seleccionada por defecto.</td></tr>
+					<tr>
+						<td>
+						Organizar el resultado:
+						</td>
+						<td>';
+		$contenido .= '<select name="filacompleta">
+							<option value=0 ' . ($filacompleta == 0 ? 'selected' : '') . ' >Con referencias</option>
+							<option value=1 ' . ($filacompleta == 1 ? 'selected' : '') . ' >fila completa</option>
+							<option value=2 ' . ($filacompleta == 2 ? 'selected' : '') . ' >2 columnas lado izquierdo</option>
+							<option value=3 ' . ($filacompleta == 3 ? 'selected' : '') . ' >2 columnas lado derecho</option>
+							<option value=4 ' . ($filacompleta == 4 ? 'selected' : '') . ' >en tabla</option>
+							
+							
+							</select>';
+
+		$contenido .= '</td>
+					</tr>
 					<tr>
 						<td>
 							estado
@@ -152,64 +174,73 @@ class admresultados extends bdlaboratorio
 
 		return $contenido;
 	}
+
 	function buscar()
 	{
-		$nombre = isset($_GET["id"]) ? $_GET["id"] : ($nombre = isset($_GET["nombre"]) ? $_GET["nombre"] : '');
-		$modo = isset($_GET["modo"]) ? $_GET["modo"] : 'nombre';
-		$idcategoria = isset($_GET["idanalisis"]) ? $_GET["idanalisis"] : '';
+		$nombre = isset($_GET['id']) ? $_GET['id'] : ($nombre = isset($_GET['nombre']) ? $_GET['nombre'] : '');
+		$modo = isset($_GET['modo']) ? $_GET['modo'] : 'nombre';
+		$idcategoria = isset($_GET['idanalisis']) ? $_GET['idanalisis'] : '';
 		if (!($idcategoria == '')) {
-			$resultado = $this->selectw('*', 'tiporesultado', "lower(" . $modo . ") like lower('" . $nombre . "') and idanalisis=" . $idcategoria);
+			$resultado = $this->selectw('*', 'tiporesultado', 'lower(' . $modo . ") like lower('" . $nombre . "') and idanalisis=" . $idcategoria);
 		} else {
-			$resultado = $this->selectw('*', 'tiporesultado', "lower(" . $modo . ") like lower('" . $nombre . "')");
+			$resultado = $this->selectw('*', 'tiporesultado', 'lower(' . $modo . ") like lower('" . $nombre . "')");
 		}
+
 		if (count($resultado) > 0) {
 			if (count($resultado) > 1) {
 				return $this->escogeranalisis();
 			} else {
-				return $this->formulario($resultado[0]['id'], $resultado[0]['nombre'], $resultado[0]['descripcion'], $resultado[0]['estado'], $resultado[0]['unidadmedicion'], $resultado[0]['parametroinferior'], $resultado[0]['parametrosuperior'], $resultado[0]['idanalisis'], "editar");
+				return $this->formulario($resultado[0]['id'], $resultado[0]['nombre'], $resultado[0]['descripcion'], $resultado[0]['estado'], $resultado[0]['unidadmedicion'], $resultado[0]['parametroinferior'], $resultado[0]['parametrosuperior'], $resultado[0]['filacompleta'], $resultado[0]['idanalisis'], 'editar');
 			}
 		} else {
-			return $this->formulario('', $nombre, '', true, '', '', '', '', "crear");
+			return $this->formulario('', $nombre, '', true, '', '', '', '', '', 'crear');
 		}
 	}
+
 	function editar()
 	{
-		$unidadmedicion = isset($_GET["unidadmedicion"]) ? $_GET["unidadmedicion"] : '';
-		$parametroinferior = isset($_GET["parametroinferior"]) ? $_GET["parametroinferior"] : '';
-		$parametrosuperior = isset($_GET["parametrosuperior"]) ? $_GET["parametrosuperior"] : '';
-		$idanalisis = isset($_GET["idanalisis"]) ? $_GET["idanalisis"] : '';
-		$nombre = isset($_GET["nombre"]) ? $_GET["nombre"] : '';
-		$descripcion = isset($_GET["descripcion"]) ? $_GET["descripcion"] : '';
-		$estado = isset($_GET["estado"]) ? $_GET["estado"] : true;
-		$id = isset($_GET["id"]) ? $_GET["id"] : "";
-		$res = "";
-		echo 'holaaaaaaaaaaaaaaaaaaa'.$nombre;
+		$unidadmedicion = isset($_GET['unidadmedicion']) ? $_GET['unidadmedicion'] : '';
+		$parametroinferior = isset($_GET['parametroinferior']) ? $_GET['parametroinferior'] : '';
+		$parametrosuperior = isset($_GET['parametrosuperior']) ? $_GET['parametrosuperior'] : '';
+		$filacompleta = isset($_GET['filacompleta']) ? $_GET['filacompleta'] : 0;
+		$idanalisis = isset($_GET['idanalisis']) ? $_GET['idanalisis'] : '';
+		$nombre = isset($_GET['nombre']) ? $_GET['nombre'] : '';
+		$descripcion = isset($_GET['descripcion']) ? $_GET['descripcion'] : '';
+		$estado = isset($_GET['estado']) ? $_GET['estado'] : true;
+		$id = isset($_GET['id']) ? $_GET['id'] : '';
+		$res = '';
+
 		$c = $this->update('tiporesultado', "nombre='" . $nombre . "', descripcion='" . $descripcion . "',
 		 estado=" . $estado . ", unidadmedicion='" . $unidadmedicion . "', 
 		 parametroinferior='" . $parametroinferior . "', parametrosuperior='" . $parametrosuperior . "',
-		  idanalisis=" . $idanalisis, "id='" . $id . "'");
+		 filacompleta=" . $filacompleta . ', idanalisis=' . $idanalisis, "id='" . $id . "'");
 		if ($c) {
-			$res = "<h2>Se modifico correctamente</h2>";
+			$res = '<h2>Se modifico correctamente</h2>';
 		} else {
-			$res = "<h2>Error, no se pudo actualizar</h2>";
+			$res = '<h2>Error, no se pudo actualizar</h2>';
 		}
-		return $res . $this->buscar();
+		return $res . $this->formulario1();
 	}
+
 	function crear()
 	{
-		$unidadmedicion = isset($_GET["unidadmedicion"]) ? $_GET["unidadmedicion"] : '';
-		$parametroinferior = isset($_GET["parametroinferior"]) ? $_GET["parametroinferior"] : '';
-		$parametrosuperior = isset($_GET["parametrosuperior"]) ? $_GET["parametrosuperior"] : '';
-		$idanalisis = isset($_GET["idanalisis"]) ? $_GET["idanalisis"] : '';
-		$nombre = isset($_GET["nombre"]) ? $_GET["nombre"] : '';
-		$descripcion = isset($_GET["descripcion"]) ? $_GET["descripcion"] : '';
-		$estado = isset($_GET["estado"]) ? $_GET["estado"] : true;
-		if ($this->insert('tiporesultado', 'nombre, descripcion, estado,unidadmedicion,parametroinferior,parametrosuperior,idanalisis', "'" . $nombre . "','" . $descripcion . "'," . $estado . ",'" . $unidadmedicion . "','" . $parametroinferior . "','" . $parametrosuperior . "'," . $idanalisis)) {
-			return "<h2>Se creo la categoria correctamente, la puede modificar</h2>" . $this->buscar();
+		$unidadmedicion = isset($_GET['unidadmedicion']) ? $_GET['unidadmedicion'] : '';
+		$parametroinferior = isset($_GET['parametroinferior']) ? $_GET['parametroinferior'] : '';
+		$parametrosuperior = isset($_GET['parametrosuperior']) ? $_GET['parametrosuperior'] : '';
+		$idanalisis = isset($_GET['idanalisis']) ? $_GET['idanalisis'] : '';
+		$nombre = isset($_GET['nombre']) ? $_GET['nombre'] : '';
+		$filacompleta = isset($_GET['filacompleta']) ? $_GET['filacompleta'] : 0;
+		$descripcion = isset($_GET['descripcion']) ? $_GET['descripcion'] : '';
+		$estado = isset($_GET['estado']) ? $_GET['estado'] : true;
+		if ($this->insert('tiporesultado', 'nombre, descripcion, estado,unidadmedicion,parametroinferior,parametrosuperior,filacompleta,idanalisis', "'" . $nombre . "','" . $descripcion . "'," . $estado . ",'" . $unidadmedicion . "','" . $parametroinferior . "','" . $parametrosuperior . "'," . $filacompleta . ',' . $idanalisis)) {
+			return '<h2>Se creo el tipo de resultado correctamente, la puede modificar</h2>' . $this->formulario1();
+			//$this->buscar();
 		} else {
-			return "<h2>Error</h2>" . $this->formulario('', $nombre, $descripcion, 'true', '', '', '', '', "crear");
+			return '<h2>Error</h2>' . $this->formulario('', $nombre, $descripcion, 'true', '', '', '', '', '', 'crear');
+
 		}
 	}
+
 	function todo()
 	{
 		$temp1 = $this->select('*', 'categoriaanalisis');
@@ -239,9 +270,9 @@ class admresultados extends bdlaboratorio
 				'.submit();">' . $i . '</a></form></td><td>' . $temp2['nombre'] . '</td><td>' . $temp2['descripcion'] .
 				'</td><td>';
 			if ($temp2['estado']) {
-				$rs .= "activo";
+				$rs .= 'activo';
 			} else {
-				$rs .= "inactivo";
+				$rs .= 'inactivo';
 			}
 			$rs .= '</td></tr>';
 			$i++;
@@ -249,6 +280,7 @@ class admresultados extends bdlaboratorio
 		$rs .= '</table>';
 		return $rs;
 	}
+
 	function analisis($id)
 	{
 		$idcategoria = '';
@@ -279,12 +311,13 @@ class admresultados extends bdlaboratorio
 				<select id="selectresultado" name="idanalisis" style="width:400px;">';
 		$res .= $selectanalisis;
 
-		$res .= "</select>";
+		$res .= '</select>';
 		return $res;
 	}
+
 	function escogeranalisis()
 	{
-		$nombre = isset($_GET["nombre"]) ? $_GET["nombre"] : '';
+		$nombre = isset($_GET['nombre']) ? $_GET['nombre'] : '';
 		$res = '<h2>Se encontro varios tipo de resultado con el mismo nombre en diferentes analisis especificos,<br /> por favor escoger la categoria de la que desea modificar</h2>
 		<form action="index.php" method="GET"><table><tr><th>Analisis</th><th>Categorias</th></tr><tr><td>
 		<select name="idanalisis"><option value=""></option>';
@@ -296,15 +329,16 @@ class admresultados extends bdlaboratorio
 		' . $this->whoiam('buscar') . '<input type="submit" value="Siguiente"/></td></tr></table></form>';
 		return $res;
 	}
+
 	function whoiam($accion)
 	{
-		$ver = isset($_GET["ver"]) ? $_GET["ver"] : '';
+		$ver = isset($_GET['ver']) ? $_GET['ver'] : '';
 		return '<input type="hidden" name="ver" value="' . $ver .
 			'" ><input type="hidden" name="accion" value="' . $accion . '" >';
 	}
 
 }
-$accion = isset($_GET["accion"]) ? $_GET["accion"] : 'formulario1';
+$accion = isset($_GET['accion']) ? $_GET['accion'] : 'formulario1';
 $admcatanalisis = new admresultados();
 $contenido = '<script type="text/javascript" src="js/buscarresultados.js" ></script>
 				<div id="content" align="center"><div class="contactof">

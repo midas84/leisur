@@ -1,5 +1,7 @@
 <?php
+ob_start();
 session_start();
+date_default_timezone_set('America/La_Paz');
 $donde = null;
 header('Content-Type: text/html; charset=utf-8');
 include('bdlaboratorio.php');
@@ -40,16 +42,17 @@ if (!($bandera)) {
 
 ?>
 
-<!DOCTYPE html >
- 
+<!DOCTYPE html>
+
 <html lang="es">
 <meta charset="utf-8">
+
 <head>
   <script language="JavaScript" src="jsm/fecha.js" type="text/javascript">
   </script>
 
   <script type="text/javascript" src="jsm/menuheader.js"></script>
-
+  <link rel="icon" type="image/png" href="images/favicon.png">
 
 
   <title>Cell Diagnostic</title>
@@ -172,3 +175,5 @@ if (!($bandera)) {
 </body>
 
 </html>
+<?
+ob_end_flush(); ?>

@@ -1,77 +1,91 @@
 <?php
 class bdlaboratorio
 {
-    public $host; // para conectarnos a localhost o el ip del servidor de postgres
-    public $db; // seleccionar la base de datos que vamos a utilizar
-    public $user; // seleccionar el usuario con el que nos vamos a conectar
-    public $pass; // la clave del usuario
-    public $conexion; //donde se guardara la conexi�n
-    public $url; //direcci�n de la conexi�n que se usara para destruirla mas adelante
+    public $host;
+    public $db;
+    public $user;
+    public $pass;
+    public $conexion;
+
     function __construct()
     {
-        $this->host = 'localhost';
-        $this->db = 'labo2';
+        $this->host = 'db';
+        $this->db   = 'labo2';
         $this->user = 'root';
-        $this->pass = '';
+        $this->pass = '1234';
+
+        // Abrimos la conexión
+        $this->conexion = mysqli_connect($this->host, $this->user, $this->pass, $this->db);
+
+        if (!$this->conexion) {
+            die("Error de conexión: " . mysqli_connect_error());
+        }
+
+        mysqli_set_charset($this->conexion, "utf8"); // mantener compatibilidad con acentos
     }
-    //creaci�n de la funci�n para cargar los valores de la conexi�n.
-    //funci�n que se utilizara al momento de hacer la instancia de la clase
-    function mysql_fetch_all($res)
-    {
-        $data = array();
-        while ($row = mysql_fetch_array($res))
-            $data[] = $row;
-        return $data;
-    }
-    function _conectar()
-    {
-        $this->url = mysql_connect($this->host, $this->user, $this->pass);
-        mysql_select_db($this->db, $this->url);
-        mysql_query("SET NAMES 'utf8'");
-        return true;
-    }
-    //funci�n para destruir la conexi�n.
+
+    // Cerrar conexión
     function destruir()
     {
-        mysql_close($this->url);
+        if ($this->conexion) {
+            mysqli_close($this->conexion);
+            $this->conexion = null;
+        }
     }
+
+    // Ejecutar consulta
     function _consulta($sql)
     {
-        if ($this->_conectar()) {
-            $result = mysql_query($sql);
+        if ($this->conexion) {
+            $result = mysqli_query($this->conexion, $sql);
         } else {
             $result = false;
         }
         return $result;
     }
+
+    // Equivalente a mysql_fetch_all
+    function mysql_fetch_all($res)
+    {
+        $data = array();
+        while ($row = mysqli_fetch_assoc($res)) { // solo asociativo
+            $data[] = $row;
+        }
+        return $data;
+    }
+
+    // Equivalente a select simple
     function select($select, $from)
     {
-        $sql = 'select ' . $select . ' from ' . $from;
+        $sql = 'SELECT ' . $select . ' FROM ' . $from;
         $rs = $this->_consulta($sql);
-        if (mysql_num_rows($rs) > 0) {
+        if ($rs && mysqli_num_rows($rs) > 0) {
             $row = $this->mysql_fetch_all($rs);
         } else {
             $row = array();
         }
         return $row;
     }
+
+    // Solo devuelve SQL
     function showselect($select, $from)
     {
-        $sql = 'select ' . $select . ' from ' . $from;
+        $sql = 'SELECT ' . $select . ' FROM ' . $from;
         return $sql;
     }
 
+    // Select con WHERE
     function selectw($select, $from, $where)
     {
-        $sql = 'select ' . $select . ' from ' . $from . ' where ' . $where;
+        $sql = 'SELECT ' . $select . ' FROM ' . $from . ' WHERE ' . $where;
         $rs = $this->_consulta($sql);
 
-
-        if (mysql_num_rows($rs) > 0) {
+        if ($rs && mysqli_num_rows($rs) > 0) {
             $row = $this->mysql_fetch_all($rs);
         } else {
             $row = array();
         }
+
         return $row;
     }
     function showselectw($select, $from, $where)
@@ -80,17 +94,17 @@ class bdlaboratorio
         echo $sql;
     }
     function update($update, $set, $where)
-    {
-        $sql = 'UPDATE ' . $update . ' SET ' . $set . ', fechamodificacion=now() WHERE ' .
-            $where;
-        $rs = $this->_consulta($sql);
-        $my_error = mysql_error();
-        if (!empty($my_error)) {
-            return false;
-        } else {
-            return true;
-        }
+{
+    $sql = 'UPDATE ' . $update . ' SET ' . $set . ', fechamodificacion=NOW() WHERE ' . $where;
+    $rs = $this->_consulta($sql);
+
+    $my_error = mysqli_error($this->conexion);
+    if (!empty($my_error)) {
+        return false;
+    } else {
+        return true;
     }
+}
     function update1($update, $set, $where)
     {
         echo $sql = 'UPDATE ' . $update . ' SET ' . $set .
@@ -98,16 +112,20 @@ class bdlaboratorio
 
     }
     function insert($into, $campos, $values)
-    {
-        $sql = "insert into " . $into . " (" . $campos . ") values (" . $values . ")";
-        $rs = $this->_consulta($sql);
-        $my_error = mysql_error();
+{
+    $sql = "INSERT INTO " . $into . " (" . $campos . ") VALUES (" . $values . ")";
+    $rs = $this->_consulta($sql);
+
+    if (!$rs) {
+        // mysqli_error necesita la conexión, que supongo tienes en $this->conexion
+        $my_error = mysqli_error($this->conexion);
         if (!empty($my_error)) {
             return false;
-        } else {
-            return true;
         }
     }
+
+    return true;
+}
     function insert1($into, $campos, $values)
     {
         return $sql = "insert into " . $into . " (" . $campos . ") values (" . $values .
@@ -115,15 +133,13 @@ class bdlaboratorio
 
     }
     function login($login, $pass)
-    {
-        $sql = "select personal.nombres nombre, personal.idseguridad idseguridad from personal inner join seguridad on personal.idseguridad=seguridad.id where (personal.usuario='" .
-            $login . "')and(personal.clave='" . $pass . "')and(personal.estado=true)";
-        $rs = $this->_consulta($sql);
-        $row = mysql_fetch_array($rs);
-        return $row;
-        //$row = mysql_fetch_array($rs);
-        //return $row;
-    }
+{
+    $sql = "select personal.nombres nombre, personal.idseguridad idseguridad from personal inner join seguridad on personal.idseguridad=seguridad.id where (personal.usuario='" .
+        $login . "')and(personal.clave='" . $pass . "')and(personal.estado=true)";
+    $rs = $this->_consulta($sql);
+    $row = $this->mysql_fetch_all($rs);
+    return $row;
+}
 
     function buscarpaciente($nombre, $apellido)
     {
@@ -486,7 +502,7 @@ class bdlaboratorio
     function resultados($idatencion)
     {
         return $this->selectw(
-            ' categoriaanalisis.nombre categoria, tiporesultado.nombre resultado, analisisespecifico.nombre analisis, resultados.valor, resultados.id, tiporesultado.unidadmedicion, tiporesultado.parametroinferior, tiporesultado.parametrosuperior',
+            ' categoriaanalisis.nombre categoria, tiporesultado.nombre resultado, analisisespecifico.nombre analisis, resultados.valor, resultados.id, tiporesultado.unidadmedicion, tiporesultado.parametroinferior, tiporesultado.parametrosuperior, tiporesultado.filacompleta',
             'resultados INNER JOIN atencion ON resultados.idatencion = atencion.id INNER JOIN analisisespecifico ON atencion.idanalisis = analisisespecifico.id inner join tiporesultado on tiporesultado.id = resultados.idtiporesultado inner join categoriaanalisis on categoriaanalisis.id=analisisespecifico.idcategoria',
             'atencion.idsolicitud=' . $idatencion
         );

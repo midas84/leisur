@@ -151,7 +151,7 @@ class admanalisis extends bdlaboratorio {
 		return $contenido;
 	}
 	function categoria($id){
-		$categorias=$this->selectw('id, nombre','categoriaanalisis','estado=true order by nombre');
+		$categorias=$this->selectw('id, nombre','categoriaanalisis','estado=true order by nombre ASC');
 		$res='<select name="categoria" style="width:400px;">';
 		foreach ($categorias as $categoria){
 			if ($categoria['id']==$id){
@@ -211,7 +211,7 @@ class admanalisis extends bdlaboratorio {
 		$c=$this->update('analisisespecifico',"nombre='".$nombre."', descripcion='".$descripcion."', estado=".$estado.", precio=".$precio.", idcategoria=".$idcategoria,"id='".$id."'");
 		
 		if ($c){
-			$res="<h2>Se modifico correctamente</h2>";
+			$res="<h2>Se modifico el analisis especifico correctamente</h2>";
 		} 
 		else {
 			$res="<h2>Error, no se pudo actualizar</h2>";
@@ -228,7 +228,7 @@ class admanalisis extends bdlaboratorio {
 		$idcategoria=isset($_GET["categoria"]) ? $_GET["categoria"] : '';
 		//echo $this->insert1('analisisespecifico','nombre, descripcion, estado, precio, idcategoria',"'".$nombre."','".$descripcion."',".$estado.", ".$precio.", ".$idcategoria);
 		if ($this->insert('analisisespecifico','nombre, descripcion, estado, precio, idcategoria',"'".$nombre."','".$descripcion."',".$estado.", ".$precio.", ".$idcategoria)){
-		 return "<h2>Se creo la categoria correctamente, la puede modificar</h2>".$this->buscar();
+		 return "<h2>Se creo el analisis especifico correctamente, la puede modificar</h2>".$this->buscar();
 		} else {
 		 return "<h2>Error</h2>".$this->formulario('',$nombre,$descripcion,'true',"crear");
 		}

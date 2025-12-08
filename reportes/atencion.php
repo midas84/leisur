@@ -22,7 +22,7 @@ include('../bdlaboratorio.php');
 $todo=$base->todosolicitud($idsol);	
 
 $html.= '<table ><tr><th colspan="4" align="center">Ficha de atencion</th></tr>';
-$html.= '<tr><td colspan="4"><img width="200" src="http://localhost/laboratorio0.7/reportes/codigob.php?codigo='.$idsol.'"></td></tr>
+$html.= '<tr><td colspan="4"><img width="200" src="codigob.php?codigo='.$idsol.'"></td></tr>
 <tr><td>nombrepaciente:</td><td>'.$todo[0]['nombres'].' '.$todo[0]['apellidos'].'</td><td>Diagnostico</td><td>'.$todo[0]['diagnostico'].'</td></tr>
 <tr><td>Fecha</td><td>'.$todo[0]['fecha'].'</td><td>Numero atencion del dia</td><td>'.$todo[0]['numerodia'].'</td></tr>
 

@@ -91,18 +91,18 @@ class motorjs extends bdlaboratorio
         $idatencion = $buscar;
         $todo = $this->todosolicitud($idatencion);
         $accionenv = 'editar';
-        
+
         echo '<form name="detalle" id="formdet" method="POST">
-        <table><input type="hidden" id="sol" name="idatencion" value=	"'.$idatencion.'"/>';
-		
+        <table><input type="hidden" id="sol" name="idatencion" value=	"' . $idatencion . '"/>';
+
         echo '<input type="hidden" name="accion" value="autorizar2" >';
 
         echo '<tr><th>analisis</th><th>Resultado</th><th>Valor</th><th colspan="2">Parametro</th></tr>';
-        
+
         $resultados = $this->resultados($idatencion);
         for ($i = 0; $i < count($resultados); $i++) {
             echo '<tr><td>' . $resultados[$i]['analisis'] . '</td><td>' . $resultados[$i]['resultado'] . '</td>
-            <td><textarea name="a' . $i . '" rows=1 cols=20 >' . $resultados[$i]['valor'] . '</textarea>'
+            <td><textarea name="a' . $i . '" rows=1 cols=20 >' . htmlspecialchars($resultados[$i]['valor']) . '</textarea>'
                 . $resultados[$i]['unidadmedicion'] . '</td><td>' . $resultados[$i]['parametroinferior'] . ' - ' . $resultados[$i]['parametrosuperior'] . '<input type="hidden" name="b' . $i . '" value="' . $resultados[$i]['id'] . '"></td></tr>';
         }
         echo '<input type="hidden" value="guardarresultadosautorizar" name="funcion" /><input name="cantidad" type="hidden" value="' . count($resultados) . '">
@@ -137,11 +137,22 @@ class motorjs extends bdlaboratorio
     {
         $cantidad = isset($_POST['cantidad']) ? $_POST['cantidad'] : 0;
         for ($i = 0; $i < $cantidad; $i++) {
-            $datos[$i] = isset($_POST["a" . $i]) ? $_POST["a" . $i] : '';
+            $datos[$i] = isset($_POST["a" . $i]) ? nl2br($_POST["a" . $i]) : '';
             $ids[$i] = isset($_POST["b" . $i]) ? $_POST["b" . $i] : '';
         }
         $this->modificarres($datos, $ids);
         echo "la atencion se modifico correctamente";
+    }
+    function paquete($buscar, $modo)
+    {
+
+
+        echo '<option value="" selected disabled>Escoge una opcion</option>';
+        $resultados = $this->selectw('*', 'paquete', "lower(" . $modo . ") LIKE lower('%" . $buscar . "%') LIMIT 10");
+
+        foreach ($resultados as $temp) {
+            echo '<li onClick="fill(\'' . $temp[$modo] . '\');">' . $temp[$modo] . '</li>';
+        }
     }
 
 }

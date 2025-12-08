@@ -36,6 +36,7 @@ echo'
       <li><a href="index.php?ver=admtiporesultado">Adm. Tipos de Resultado</a></li>
       <li><a href="index.php?ver=admcatanalisis">Adm. Categoria Analisis</a></li>
       <li><a href="index.php?ver=admanalisisespec">Adm. Analisis Especificos</a></li>
+      <li><a href="index.php?ver=admpaquetes">Adm. Paquetes</a></li>
     </ul>
   </li>
   
