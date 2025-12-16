@@ -25,7 +25,7 @@ class admresultados extends bdlaboratorio
 								</td>
 								<td>
 								Analisis:
-								<select  id="selectresultado" name="selectanalisis" onchange="mostrarresultados(this)">
+								<select style="width: 250px;" id="selectresultado" name="selectanalisis" onchange="mostrarresultados(this)">
 								<option value="" selected disabled>Escoge una opcion</option>
 								</select>
 									

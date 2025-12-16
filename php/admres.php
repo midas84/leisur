@@ -9,7 +9,7 @@ class admautorizar extends bdlaboratorio
         return '<input type="hidden" name="ver" value="' . $ver .
             '" ><input type="hidden" name="accion" value="' . $accion . '" >';
     }
-    
+
     function defaul()
     {
         $this->contenido .= '
@@ -60,7 +60,7 @@ class admautorizar extends bdlaboratorio
     function mostrarresultados()
     {
         $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
-        $por_pagina = 50;
+        $por_pagina = 100;
         $offset = ($pagina - 1) * $por_pagina;
 
         // Obtener el total de resultados
@@ -115,8 +115,11 @@ class admautorizar extends bdlaboratorio
         // Agregar enlaces de paginación
         $this->contenido .= '<div style="margin-top: 10px;">Páginas: ';
         for ($i = 1; $i <= $total_paginas; $i++) {
-            $this->contenido .= '<a href="?ver=autorizar&pagina=' . $i . '" style="margin:0 5px;' .
+            $this->contenido .= '<a href="?ver=admres&pagina=' . $i . '" style="margin:0 5px;' .
                 ($i == $pagina ? 'font-weight:bold;text-decoration:underline;' : '') . '">' . $i . '</a>';
+            if (($i % 30) === 0) {
+                $this->contenido .= '<br />';
+            }
         }
         $this->contenido .= '</div>';
     }

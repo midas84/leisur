@@ -137,7 +137,7 @@ class motorjs extends bdlaboratorio
     {
         $cantidad = isset($_POST['cantidad']) ? $_POST['cantidad'] : 0;
         for ($i = 0; $i < $cantidad; $i++) {
-            $datos[$i] = isset($_POST["a" . $i]) ? nl2br($_POST["a" . $i]) : '';
+            $datos[$i] = isset($_POST["a" . $i]) ? $_POST["a" . $i] : '';
             $ids[$i] = isset($_POST["b" . $i]) ? $_POST["b" . $i] : '';
         }
         $this->modificarres($datos, $ids);
@@ -153,6 +153,10 @@ class motorjs extends bdlaboratorio
         foreach ($resultados as $temp) {
             echo '<li onClick="fill(\'' . $temp[$modo] . '\');">' . $temp[$modo] . '</li>';
         }
+    }
+    function br2nl($string)
+    {
+        return preg_replace('/<br\s*\/?>/i', "\n", $string);
     }
 
 }

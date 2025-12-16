@@ -41,24 +41,24 @@ class motorjs extends bdlaboratorio
             $nombre = $temp['nombre'] . ' ';
             switch ($temp['filacompleta']) {
                 case 0:
-                    $nombre .= 'con referencia';
+                    $nombre .= '│ con referencia';
                     break;
                 case 1:
-                    $nombre .= 'filacompleta';
+                    $nombre .= '│ filacompleta';
                     break;
                 case 2:
-                    $nombre .= 'columna izquierda';
+                    $nombre .= '│ columna izquierda';
                     break;
                 case 3:
-                    $nombre .= 'columna derecha';
+                    $nombre .= '│ columna derecha';
                     break;
                 case 4:
-                    $nombre .= 'En tabla';
+                    $nombre .= '│ En tabla';
                     break;
-                
+
             }
 
-            $nombre .= ' ' . ($temp['estado'] ? 'Activo' : 'Inactivo');
+            $nombre .= ' ' . ($temp['estado'] ? '│ Activo' : '│ Inactivo');
 
             // Elegir color según la variable $dark
             $bgColor = $dark ? '#e0e0e0' : '#ffffff';

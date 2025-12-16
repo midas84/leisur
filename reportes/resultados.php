@@ -274,32 +274,32 @@ for (
 
                 if ((($resultados[$i]['parametroinferior'] == '0') && ($resultados[$i]['parametrosuperior'] == '0')) || (($resultados[$i]['parametroinferior'] == '') || ($resultados[$i]['parametroinferior'] == ''))) {
 
-                    $cab = $cab . '<td  style="padding-left: 50px; padding-right: 50px; vertical-align: middle;" >' . $resultados[$i]['valor'] . ' ' . $resultados[$i]['unidadmedicion'] . '</td>';
+                    $cab = $cab . '<td  style="padding-left: 50px; padding-right: 50px; vertical-align: middle;" >' . nl2br($resultados[$i]['valor']) . ' ' . $resultados[$i]['unidadmedicion'] . '</td>';
 
                 } else {
-                    $cab = $cab . '<td style="padding-left: 50px; padding-right: 50px; vertical-align: middle;">' . $resultados[$i]['valor'] . ' ' . $resultados[$i]['unidadmedicion'] .
+                    $cab = $cab . '<td style="padding-left: 50px; padding-right: 50px; vertical-align: middle;">' . nl2br($resultados[$i]['valor']) . ' ' . $resultados[$i]['unidadmedicion'] .
                         '</td>';
-                    $cab = $cab . '<td  style="padding-left: 10px; padding-bottom: 12px; padding-right: 5px; vertical-align: middle;" >' . $resultados[$i]['parametroinferior'] . ' - ' . $resultados[$i]['parametrosuperior'] . ' ' . $resultados[$i]['unidadmedicion'] . '</td>';
+                    $cab = $cab . '<td  style="padding-left: 10px;  padding-right: 5px; vertical-align: middle;" >' . $resultados[$i]['parametroinferior'] . ' - ' . $resultados[$i]['parametrosuperior'] . ' ' . $resultados[$i]['unidadmedicion'] . '</td>';
                 }
                 $cab = $cab . '</tr>';
                 break;
 
             case 1: //caso fila completa
-                $cab = $cab . '<tr><td style="width: 30%;"><b>' . $resultados[$i]['resultado'] . '</b></td><td colspan="2">' . $resultados[$i]['valor'] .
+                $cab = $cab . '<tr><td style="width: 48%;"><b>' . $resultados[$i]['resultado'] . '</b></td><td colspan="2">' . nl2br($resultados[$i]['valor']) .
                     '</td>';
                 $cab = $cab . '</tr>';
                 break;
 
             case 2: //caso columna derecha
-                $columnaderecha .= '<b>' . $resultados[$i]['resultado'] . '</b> ' . $resultados[$i]['valor'] . '<br> ';
+                $columnaderecha .= '<b>' . $resultados[$i]['resultado'] . '</b> ' . nl2br($resultados[$i]['valor']) . '<br> ';
                 break;
             case 3://caso columna izquierda
-                $columnaizquierda .= '<b>' . $resultados[$i]['resultado'] . '</b> ' . $resultados[$i]['valor'] . '<br> ';
+                $columnaizquierda .= '<b>' . $resultados[$i]['resultado'] . '</b> ' . nl2br($resultados[$i]['valor']) . '<br> ';
                 break;
             case 4://tabla columna izquierda
 
                 $tabla['titulo'][] = $resultados[$i]['resultado'];
-                $tabla['resultado'][$a] = $resultados[$i]['valor'];
+                $tabla['resultado'][$a] = nl2br($resultados[$i]['valor']);
                 $analisis = $resultados[$i]['analisis'];
                 $a++;
                 break;
