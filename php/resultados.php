@@ -39,7 +39,7 @@ class admresultados extends bdlaboratorio
         for ($i = 0; $i < count($resultados); $i++) {
             $this->contenido .= '<tr><td>' . $resultados[$i]['analisis'] . '</td>
             <td>' . $resultados[$i]['resultado'] . '</td>
-            <td><textarea name="a' . $i . '" rows=1 cols=20 />' . $resultados[$i]['valor'] . '</textarea>' . $resultados[$i]['unidadmedicion'] . '</td>
+            <td><textarea class="dynamic-height" name="a' . $i . '" rows=1 cols=30 />' . $resultados[$i]['valor'] . '</textarea>' . $resultados[$i]['unidadmedicion'] . '</td>
             <td>' . $resultados[$i]['parametroinferior'] . ' - ' . $resultados[$i]['parametrosuperior'] .
                 '<input type="hidden" name="b' . $i . '" value="' . $resultados[$i]['id'] . '"></td></tr>';
         }
@@ -68,6 +68,41 @@ class admresultados extends bdlaboratorio
 $resultados = new admresultados();
 $resultados->contenido =
     '<script type="text/javascript" src="js/detalles.js" ></script>
+    <script>
+$(document).ready(function() {
+
+    // Función central para ajustar la altura
+    function adjustTextareaHeight(element) {
+        // Accedemos al objeto jQuery del elemento
+        var $element = $(element);
+        
+        // 1. Establece la altura a "auto". Esto es crucial para que
+        //    el elemento se "colapse" y permita un cálculo real de su contenido.
+        $element.css("height", "auto");
+        
+        // 2. Establece la altura al "scrollHeight".
+        //    scrollHeight es la altura mínima requerida para ver todo el contenido.
+        //    Usamos element.scrollHeight ([0] del objeto jQuery) para acceder a la propiedad nativa.
+        $element.css("height", element.scrollHeight + "px");
+    }
+
+    // --- Aplicación de la función a la CLASE .dynamic-height ---
+
+    // 1. Ajuste inicial: Esto asegura que el textarea se ajuste al contenido
+    //    que PHP le carga al inicio de la página.
+    $("textarea.dynamic-height").each(function() {
+        // Llamamos a la función con el elemento DOM nativo
+        adjustTextareaHeight(this);
+    });
+
+    // 2. Ajuste al escribir: Usa el evento "input" para la mayoría de los navegadores,
+    //    o "keyup" para compatibilidad con versiones muy antiguas.
+    $("textarea.dynamic-height").on("input keyup", function() {
+        // Llamamos a la función con el elemento DOM nativo
+        adjustTextareaHeight(this);
+    });
+});
+</script>
     <div id="content" align="center"><div class="contactof">';
 
 $accion = isset($_GET["accion"]) ? $_GET["accion"] : 'defaul';

@@ -102,7 +102,7 @@ class motorjs extends bdlaboratorio
         $resultados = $this->resultados($idatencion);
         for ($i = 0; $i < count($resultados); $i++) {
             echo '<tr><td>' . $resultados[$i]['analisis'] . '</td><td>' . $resultados[$i]['resultado'] . '</td>
-            <td><textarea name="a' . $i . '" rows=1 cols=20 >' . htmlspecialchars($resultados[$i]['valor']) . '</textarea>'
+            <td><textarea class="dynamic-height" name="a' . $i . '" rows=1 cols=30 >' . htmlspecialchars($resultados[$i]['valor']) . '</textarea>'
                 . $resultados[$i]['unidadmedicion'] . '</td><td>' . $resultados[$i]['parametroinferior'] . ' - ' . $resultados[$i]['parametrosuperior'] . '<input type="hidden" name="b' . $i . '" value="' . $resultados[$i]['id'] . '"></td></tr>';
         }
         echo '<input type="hidden" value="guardarresultadosautorizar" name="funcion" /><input name="cantidad" type="hidden" value="' . count($resultados) . '">
