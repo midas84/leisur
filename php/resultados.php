@@ -57,7 +57,7 @@ class admresultados extends bdlaboratorio
     {
         $cantidad = isset($_GET['cantidad']) ? $_GET['cantidad'] : 0;
         for ($i = 0; $i < $cantidad; $i++) {
-            $datos[$i] = isset($_GET["a" . $i]) ? nl2br($_GET["a" . $i]) : '';
+            $datos[$i] = isset($_GET["a" . $i]) ? $_GET["a" . $i] : '';
             $ids[$i] = isset($_GET["b" . $i]) ? $_GET["b" . $i] : '';
         }
         $this->modificarres($datos, $ids);
