@@ -39,7 +39,7 @@ function cabecera($todo, $idsol)
         <div id="direcciones" font-size: 13px; >75777151 / 76123455 <br /> cell.diagnostic.sc@gmail.com </br>Reg. SEDES: 242/RC/705/NII</div>
         <div id="pie" style="font-size: 13px;" >
         <div id="fechaimpresion">Fecha de impresi&oacute;n: ' . $fechadeimpresion . '</div><hr /> <div style=" padding-left: 20px;"></div>
-        Santa Cruz: Calle Cuellar No. 152 entre 21 de Mayo y Libertad <br>Sucre: Destacamento 111 No. 165; Descatamento 130 No. 296A <br />
+        Santa Cruz: Av. Irala # 354 Primer Piso (Cardiologia Barta) <br>Sucre: Destacamento 111 No. 165; Descatamento 130 No. 296A <br />
         @laboratoriocelldiagnostic <br />  Laboratorio Cell-Diagnostic SC </div></diV>
         <table  id="ho">';
 }
