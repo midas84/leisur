@@ -247,7 +247,7 @@ for (
             $cab = $cab . '<tr><th colspan="3" style="font-size:16px;"><center>' . $resultados[$i]['categoria'] .
                 '</center></th></tr>';
         }
-        if ($pa >= 37) {
+        if ($pa >= 25) {
             $pagina++;
             $cab = $cab . '</table>';
             $cab = $cab . '<div style="page-break-before: always;"></div>';
@@ -261,11 +261,12 @@ for (
         if ($resultados[$i]['filacompleta'] == '0') {
 
             $cab = $cab . '<tr ><th style="width: 33%;">Prueba</th><th align="center" valign="middle" width: 34%;">Resultado</th><th align="center" valign="middle" style="width: 33%;">Parametro</th></tr>';
+        $pa++;
         }
     }
     //######### ----------- Parte central del reporte ----------- #########
     if (!(($resultados[$i]['valor'] == '') || ($resultados[$i]['valor'] == ' '))) {
-        $pa++;
+        //$pa++;
 
         switch ($resultados[$i]['filacompleta']) {
 
@@ -282,19 +283,23 @@ for (
                     $cab = $cab . '<td  style="padding-left: 10px;  padding-right: 5px; vertical-align: middle;" >' . $resultados[$i]['parametroinferior'] . ' - ' . $resultados[$i]['parametrosuperior'] . ' ' . $resultados[$i]['unidadmedicion'] . '</td>';
                 }
                 $cab = $cab . '</tr>';
+                $pa++;
                 break;
 
             case 1: //caso fila completa
                 $cab = $cab . '<tr><td style="width: 48%;"><b>' . $resultados[$i]['resultado'] . '</b></td><td colspan="2">' . nl2br($resultados[$i]['valor']) .
                     '</td>';
                 $cab = $cab . '</tr>';
+                $pa++;
                 break;
 
             case 2: //caso columna derecha
                 $columnaderecha .= '<b>' . $resultados[$i]['resultado'] . '</b> ' . nl2br($resultados[$i]['valor']) . '<br> ';
+                $pa++;
                 break;
             case 3://caso columna izquierda
                 $columnaizquierda .= '<b>' . $resultados[$i]['resultado'] . '</b> ' . nl2br($resultados[$i]['valor']) . '<br> ';
+                $pa++;
                 break;
             case 4://tabla columna izquierda
 
