@@ -15,9 +15,7 @@ blockquote, q {
 	quotes:none;
 }
 table, table td {
-    padding-left: 10px;
-    padding-right: 10px;
-	
+	padding:0;
 	border:none;
 	border-collapse:collapse;
 }
@@ -27,3 +25,4 @@ img {
 embed {
 	vertical-align:top;
 }
+

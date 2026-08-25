@@ -8,9 +8,15 @@ class admatencion extends bdlaboratorio
         return '<input type="hidden" name="ver" value="' . $ver .
             '" ><input type="hidden" name="accion" value="' . $accion . '" >';
     }
-    function formulario($paqueteseleccionado, $id, $fecha, $diagnostico, $analisisseleccionado,
-        $doctor, $accion)
-    {
+    function formulario(
+        $paqueteseleccionado,
+        $id,
+        $fecha,
+        $diagnostico,
+        $analisisseleccionado,
+        $doctor,
+        $accion
+    ) {
         $res = '
         <script type="text/javascript">
 			$(function(){
@@ -29,7 +35,7 @@ class admatencion extends bdlaboratorio
 <script type="text/javascript" src="js/resultados.js"></script>';
         $res .= "<center><form><input type='hidden' name='ver' value='resultadosanteriores'><input type='hidden' name='id' value='" .
             $id . "'> <input id='resultadosanteriores' type='submit' value='Ver Resultados Anteriores del paciente'> </form></center>";
-        $res .= '<form name="i" method="GET" action="index.php"><table>';
+        $res .= '<form name="i" method="GET" action="index.php" onkeydown="return event.key != \'Enter\';"><table>';
         $res .= $this->whoiam($accion);
         $datospaciente = $this->llenardatospaciente($id);
         // aqui se llena el id del paciente;
@@ -97,11 +103,21 @@ class admatencion extends bdlaboratorio
              <link rel="stylesheet" href="css/example.css" TYPE="text/css" MEDIA="screen">
 <script type="text/javascript" src="js/tabber.js"></script>
 <script type="text/javascript" src="js/resultados.js"></script>
-<form name="i" method="GET" action="index.php"><table>';
+<form name="i" method="GET" action="index.php" onkeydown="return event.key != \'Enter\';"><table>';
+
+        if ($solicitud['estado']) {
+            $estadoliteral = 'Activo';
+            $botonestado = '<input type="button" value="Borrar" onclick="if(confirm(\'¿Estás seguro de que deseas desactivar este registro?\')){ window.location.href=\'index.php?ver=atencion&accion=borrar&id=' . $solicitud['id'] . '\'; }" />';
+        } else {
+            $estadoliteral = 'Inactivo';
+            $botonestado = '<input type="button" value="Activar" onclick="if(confirm(\'¿Estás seguro de que deseas activar este registro?\')){ window.location.href=\'index.php?ver=atencion&accion=activar&id=' . $solicitud['id'] . '\'; }" />';
+        }
         $res .= $this->whoiam($solicitud['accion']);
         $datospaciente = $this->llenardatospaciente($solicitud['idpaciente']);
         // aqui se llena el id del paciente;
-        $res .= '<tr><td>ID de la Atencion</td><td>' . $solicitud['id'] .
+        $res .= '
+        <tr><td>Estado</td><td><b>' . $estadoliteral . '</b></td>
+        </tr><tr><td>ID de la Atencion</td><td>' . $solicitud['id'] .
             '</td></tr><tr><td>Paciente</td><td>' . $datospaciente[0]['nombres'] . ' ' . $datospaciente[0]['apellidos'] .
             '<input type="hidden" name="id" value="' . $solicitud['id'] .
             '"></td></tr><tr><td>Diagnostico presuntivo</td><td ><input type="text" name="diagnostico" value="' .
@@ -113,7 +129,9 @@ class admatencion extends bdlaboratorio
         // desde aqui es el check
         $res .= '<tr><td colspan="2">' . $this->check2($solicitud['analisis']) .
             '</td></tr>
-        <tr><td><input type="submit" value="Editar" /></td></tr></table>';
+        <tr><td><input type="submit" value="Editar" />
+        ' . $botonestado . '
+        </td></tr></table>';
         return $res;
     }
     function resultados2()
@@ -164,6 +182,7 @@ class admatencion extends bdlaboratorio
                     $checkanalisis .= '<tr>';
                 }
                 for ($a = 0; $a < sizeof($analisisseleccionado); $a++) {
+
                     if ($analisis[$i]['id'] == $analisisseleccionado[$a]['idanalisis']) {
                         $e++;
                         $checkanalisis .= '<td><input class="res" type="checkbox" onclick="" name="a[]" value="' .
@@ -202,7 +221,6 @@ class admatencion extends bdlaboratorio
                 } else {
                     $band = false;
                 }
-
             }
         }
         $checkanalisis = $checkanalisis . '</tr></table></div></div>';
@@ -295,16 +313,11 @@ class admatencion extends bdlaboratorio
             </style>
             <form name="i" method="GET" action=
             "index.php">
-            <table><tr><th><h2>Ingresar paciente o atencion</h2></th></tr><tr><td>' .
-            $this->whoiam('nuevo') . 'Buscar por:
-            <input id="seleccionmodo" type="radio" name="modo" value="id" checked>ID paciente
-            <input id="seleccionmodo" type="radio" name="modo" value="nombres" >Nombre (nombre,apellido)  
-            <input id="seleccionmodo" type="radio" name="modo" value="apellidos" >apellido (apellido, nombre)   
-            <input id="seleccionmodo" type="radio" name="modo" value="ci">CI  
-            <input id="seleccionmodo" type="radio" name="modo" value="atencion" >ID de la Atencion</td></tr>
-            <input type="hidden" name="tabla" value="pacienteb">
+            <table><tr><th><h2>Ingresar atencion</h2></th></tr><tr><td>' .
+            $this->whoiam('editar') . '
+            </td></tr>   
             <tr><td colspan="2">
-            <center><input type="text" autocomplete="off" type="text" id="nombre" name="nombre" onkeyup="lookup(this.value, document.i.modo, document.i.tabla.value);" >
+            <center><input type="text" autocomplete="off" type="text" id="nombre" name="id"  >
             <div class="suggestionsBox" id="suggestions" style="display: none;" />
             				<div class="suggestionList" id="autoSuggestionsList">
             					&nbsp;
@@ -314,7 +327,7 @@ class admatencion extends bdlaboratorio
             '<input type="submit" value="Mostrar Todas las atenciones"/></td></tr></table></form><br />
                         <form name="iii" method="GET" action="index.php"><table><tr><td>
                         ' . $this->whoiam('todo') .
-            '<input type="submit" value="Mostrar Todos los pacientes"/></td></tr></table></form>';
+            '</tr></table></form>';
         return $contenido;
     }
     function nuevo($nombre, $modo)
@@ -327,8 +340,15 @@ class admatencion extends bdlaboratorio
                 $usuario = $this->selectw('*', 'paciente', "estado=true and ci='" . $nombre .
                     "'");
                 if (count($usuario) > 0) {
-                    return $this->formulario(array(), $usuario[0]['id'], strftime("%Y-%m-%d", time()),
-                        '', array(), '', 'preguardar'); //($usuario[0]['id']);
+                    return $this->formulario(
+                        array(),
+                        $usuario[0]['id'],
+                        strftime("%Y-%m-%d", time()),
+                        '',
+                        array(),
+                        '',
+                        'preguardar'
+                    );
                 } else {
                     $ret = '<h2>No existe paciente, vuela a intentar</h2>' . $this->formulario1();
                 }
@@ -338,8 +358,15 @@ class admatencion extends bdlaboratorio
                 $usuario = $this->selectw('*', 'paciente', "estado=true and nombres='" . $sep[0] .
                     "' and apellidos='" . $sep[1] . "'");
                 if (count($usuario) > 0) {
-                    return $this->formulario(array(), $usuario[0]['id'], strftime("%Y-%m-%d", time()),
-                        '', array(), '', 'preguardar'); //($usuario[0]['id']);
+                    return $this->formulario(
+                        array(),
+                        $usuario[0]['id'],
+                        strftime("%Y-%m-%d", time()),
+                        '',
+                        array(),
+                        '',
+                        'preguardar'
+                    );
                 } else {
                     $ret = '<h2>No existe paciente, vuela a intentar</h2>' . $this->formulario1();
                 }
@@ -347,8 +374,15 @@ class admatencion extends bdlaboratorio
             case 'id':
                 $usuario = $this->selectw('*', 'paciente', 'estado=true and id=' . $nombre);
                 if (count($usuario) > 0) {
-                    return $this->formulario(array(), $nombre, strftime("%Y-%m-%d", time()), '',
-                        array(), '', 'preguardar'); //($usuario[0]['id']);
+                    return $this->formulario(
+                        array(),
+                        $nombre,
+                        strftime("%Y-%m-%d", time()),
+                        '',
+                        array(),
+                        '',
+                        'preguardar'
+                    );
                 } else {
                     $ret = '<h2>No existe paciente, vuela a intentar</h2>' . $this->formulario1();
                 }
@@ -357,7 +391,7 @@ class admatencion extends bdlaboratorio
                 $usuario = $this->selectw('*', 'solicitud', 'id=' . $nombre);
                 if (count($usuario) > 0) {
                     $_GET['id'] = $usuario[0]['id'];
-                    return $this->editar(); //($usuario[0]['id']);
+                    return $this->editar();
                 } else {
                     $ret = '<h2>No existe atencion, vuela a intentar</h2>' . $this->formulario1();
                 }
@@ -385,26 +419,65 @@ class admatencion extends bdlaboratorio
         return $rs;
     }
 
-    function todo2()
+    // MODIFICADO: se agrega paginacion con $page y $perPage
+    function todo2($page = 1, $perPage = 50)
     {
-        $temp1 = $this->selectw('solicitud.id idatencion, paciente.id idpaciente, solicitud.fechacreacion fechacreacion, paciente.nombres nombre, paciente.apellidos apellido',
+        $page   = max(1, intval($page));
+        $offset = ($page - 1) * $perPage;
+
+        // Contar total de registros para calcular paginas
+        $totalRs    = $this->selectw(
+            'COUNT(*) as total',
             'solicitud inner join paciente on solicitud.idpaciente=paciente.id',
-            'solicitud.estado=true');
-        $i = 1;
-        $rs = '<h2>Lista de Atencion</h2><table><tr><th>No.</th><th>Nombre Paciente</th><th>ID Paciente</th><th>ID Atencion</th><th>Fecha de Creaci&oacute;n Atenci&oacute;n</th></tr>';
+            '(solicitud.id!="")'
+        );
+        $total      = intval($totalRs[0]['total']);
+        $totalPages = intval(ceil($total / $perPage));
+
+        // Traer solo las filas de esta pagina
+        $temp1 = $this->selectw(
+            'solicitud.estado estadoatencion, solicitud.id idatencion, paciente.id idpaciente, solicitud.fechacreacion fechacreacion, paciente.nombres nombre, paciente.apellidos apellido',
+            'solicitud inner join paciente on solicitud.idpaciente=paciente.id',
+            '(solicitud.id!="") order by solicitud.id desc limit ' . $perPage . ' offset ' . $offset
+        );
+
+        $i  = $offset + 1;
+        $rs = '<h2>Lista de Atencion</h2><table><tr><th></th><th>ID Atencion</th><th>Nombre Paciente</th><th>Fecha de Creaci&oacute;n Atenci&oacute;n</th><th>Estado de la atención</th></tr>';
         foreach ($temp1 as $temp2) {
             $rs .= '<tr><td><form method="GET" name="editar' . $i . '" action="index.php">' .
                 $this->whoiam('editar') . '<input type="hidden" name="id" value="' . $temp2['idatencion'] .
-                '"><input type="submit" value="' . $i . '"/></form></td><td>' . $temp2['nombre'] .
-                ' ' . $temp2['apellido'] . '</td><td>' . $temp2['idpaciente'] . '</td><td>' . $temp2['idatencion'] .
-                '</td><td>' . $temp2['fechacreacion'] . '</td></tr>';
+                '"><input type="submit" value="mostrar"/></form></td><td>' . $temp2['idatencion'] .
+                '</td><td>' . $temp2['nombre'] .
+                ' ' . $temp2['apellido'] . '</td><td>' . $temp2['fechacreacion'] . '</td><td>';
+            if ($temp2['estadoatencion']) {
+                $rs .= "<b>activo</b>";
+            } else {
+                $rs .= "inactivo";
+            }
+            $rs .= '</td></tr>';
             $i++;
         }
         $rs .= '</table>';
+
+        // Navegacion de paginas
+        $ver = isset($_GET['ver']) ? $_GET['ver'] : '';
+        $rs .= '<div>P&aacute;gina <b>' . $page . '</b> de <b>' . $totalPages . '</b> &nbsp;|&nbsp; Total: ' . $total . ' registros &nbsp;&nbsp;';
+        if ($page > 1) {
+            $rs .= '<a href="index.php?ver=' . $ver . '&accion=todo2&page=' . ($page - 1) . '">&laquo; Anterior</a> &nbsp;';
+        }
+        if ($page < $totalPages) {
+            $rs .= '<a href="index.php?ver=' . $ver . '&accion=todo2&page=' . ($page + 1) . '">Siguiente &raquo;</a>';
+        }
+        $rs .= '</div>';
+
         return $rs;
     }
+
     function doctor($seleccionado)
     {
+        if ($seleccionado == "") {
+            $seleccionado = "A QUIEN CORRESPONDA";
+        }
         $contenido = '<script type="text/javascript" src="js/buscar.js" ></script>';
         $contenido .= '<style type="text/css">
             	.suggestionsBox {
@@ -453,7 +526,7 @@ class admatencion extends bdlaboratorio
         }
         //aqui se guarda solicitud
         $res = $this->selectw('max(atenciondia) max', 'solicitud', "fechacreacion='" . $fecha .
-            "'"); 
+            "'");
         if ($res[0]['max'] != '') {
             $idsolicitud = $res[0]['max'] + 1;
         } else {
@@ -471,22 +544,25 @@ class admatencion extends bdlaboratorio
         $atencion = '';
         $banderasubgrupo = false;
         //agregamos los paquetes
-        foreach ($paquetes as $paquete){
-             $idsolicitud[0]['max']; 
-             $paquete;
-             $existe= $this->selectw('*','perfiladquirido','idsolicitud='.$idsolicitud[0]['max'].' and idpaquete='.$paquete);
-             if (count(!($existe)>0)){
-                $this->insert('perfiladquirido', 'idsolicitud, idpaquete', $idsolicitud[0]['max'].', '. $paquete);
+        
+        foreach ($paquetes as $paquete) {
+            $idsolicitud[0]['max'];
+            $paquete;
+            $existe = $this->selectw('*', 'perfiladquirido', 'idsolicitud=' . $idsolicitud[0]['max'] . ' and idpaquete=' . $paquete);
+            
+            if (count(!($existe) > 0)) {
+  
+                $this->insert('perfiladquirido', 'idsolicitud, idpaquete', $idsolicitud[0]['max'] . ', ' . $paquete,1);
                 $idperfil = $this->select('MAX( id ) max', 'perfiladquirido');
-                $resultadosbd=$this->selectw('idresultado','perfilpaquete','idpaquete='.$paquete);
-                foreach ($resultadosbd as $resultadobd){
+                $resultadosbd = $this->selectw('idresultado', 'perfilpaquete', 'idpaquete=' . $paquete);
+                foreach ($resultadosbd as $resultadobd) {
                     $into = 'resultados';
                     $campos = 'idtiporesultado,  idpaquete';
                     //sacamos el idanalisis de los resultados
                     $values = $resultadobd[0] . "," . $idperfil[0]['max'];
                     $this->insert($into, $campos, $values);
                 }
-             }     
+            }
         }
         //agregamos los resultados
         foreach ($resultados as $resultado) {
@@ -500,6 +576,7 @@ class admatencion extends bdlaboratorio
             }
             $banderaatencion2 = $analisis[0]['idanalisis'];
             if ($banderaatencion) {
+                
                 $into = 'atencion';
                 $campos = 'idsolicitud,  idanalisis';
                 //sacamos el idanalisis de los resultados
@@ -518,9 +595,11 @@ class admatencion extends bdlaboratorio
                     $this->insert($into, $campos, $values2);
                     $aten2 = $this->select('MAX( id ) max', 'atencion');
                     $aten3 = $this->selectw('idanalisis', 'atencion', 'id=' . $aten2[0]['max']);
-                    $resultados2 = $this->selectw('tiporesultado.id',
+                    $resultados2 = $this->selectw(
+                        'tiporesultado.id',
                         'tiporesultado INNER JOIN analisisespecifico ON tiporesultado.idanalisis = analisisespecifico.id',
-                        'analisisespecifico.id=' . $aten3[0]['idanalisis']);
+                        'analisisespecifico.id=' . $aten3[0]['idanalisis']
+                    );
                     foreach ($resultados2 as $b) {
                         $this->insert('resultados', 'idatencion, idtiporesultado', $aten2[0]['max'] .
                             ',' . $b['id']);
@@ -529,14 +608,15 @@ class admatencion extends bdlaboratorio
             }
             //metemos los resultados
         }
-       return ' <div  style=" width=500px;"><embed src="reportes/atencion.php?idsol=' .
-           $idsolicitud[0]['max'] .
-           '" type="application/pdf" width="500px" ></div>';
+        return ' <div  style=" width=500px;"><embed style=" height: 700px;" src="reportes/atencion.php?idsol=' .
+            $idsolicitud[0]['max'] .
+            '" type="application/pdf" width="500px" ></div>';
     }
     function editar()
     {
         $res = $this->selectw('*', 'solicitud', 'id=' . $_GET['id']);
         $resultado['id'] = $_GET['id'];
+        $resultado['estado'] = $res[0]['estado'];
         $resultado['diagnostico'] = $res[0]['diagnostico'];
         $resultado['fecha'] = $res[0]['fechacreacion'];
         $pac = $this->selectw('*', 'paciente', 'id=' . $res[0]['idpaciente']);
@@ -544,9 +624,12 @@ class admatencion extends bdlaboratorio
         $resultado['idpaciente'] = $res[0]['idpaciente'];
         $doc = $this->selectw('*', 'doctor', 'id=' . $res[0]['iddoctor']);
         $resultado['doctor'] = $doc[0]['nombre'];
-	$resultado['paquete']=$this->selectw('id, idanalisis', 'atencion', 'estado=true and idsolicitud=' . $resultado['id']);
-        $resultado['analisis'] = $this->selectw('id, idanalisis', 'atencion',
-            'estado=true and idsolicitud=' . $resultado['id']);
+        //$resultado['paquete']=$this->selectw('id, idanalisis', 'atencion', 'estado=true and idsolicitud=' . $resultado['id']);
+        $resultado['analisis'] = $this->selectw(
+            'id, idanalisis',
+            'atencion',
+            'estado=true and idsolicitud=' . $resultado['id']
+        );
         $resultado['accion'] = 'editarf';
         return $this->formularioedicion($resultado);
     }
@@ -554,6 +637,7 @@ class admatencion extends bdlaboratorio
     {
         $datos = $_GET;
         $diagnostico = isset($datos['diagnostico']) ? $datos['diagnostico'] : '';
+
         $atenciones = $this->selectw("*", "atencion", "estado=true and idsolicitud=" . $datos['id']);
         foreach ($atenciones as $atencion) {
             $this->update("resultados", "estado=false", "idatencion=" . $atencion['id']);
@@ -562,15 +646,15 @@ class admatencion extends bdlaboratorio
         $doctor = $this->selectw('*', 'doctor', "lower(nombre)=lower('" . $datos['doctor'] .
             "')");
         if (count($doctor) == 0) {
-            $this->insert('doctor', 'nombre', '"' . $doctor . '"');
-            $idd = $this->selectw('id', 'doctor', "nombre='" . $doctor . "'");
+            $this->insert('doctor', 'nombre', '"' . $datos['doctor'] . '"');
+            $idd = $this->selectw('id', 'doctor', "nombre='" . $datos['doctor'] . "'");
             $iddoctor = $idd[0]['id'];
         } else {
             $iddoctor = $doctor[0]['id'];
         }
         if (($iddoctor != null) && ($datos['fecha'] != '') && ($datos['id'] != '')) {
-            $this->update("solicitud", "fechacreacion=" . $datos['fecha'] . " , iddoctor=" .
-                $iddoctor . ", diagnostico=" . $datos['diagnostico'], "id=" . $datos['id']);
+            $this->update("solicitud", "fechacreacion='" . $datos['fecha'] . "' , iddoctor=" .
+                $iddoctor . ", diagnostico='" . $datos['diagnostico'] . "'", "id=" . $datos['id']);
         } else {
             return $this->editar($datos['id']);
         }
@@ -602,16 +686,39 @@ class admatencion extends bdlaboratorio
                 }
             }
         }
-        return ' <div  style="height:670px; width=500px;"><embed src="reportes/atencion.php?idsol=' .
-            $datos['id'] . '" type="application/pdf" width="50%" height="100%"></div>';
+        //die();
+        return ' <script type="text/javascript">alert("Se edito correctamente la atención numero ' . $datos['id'] . '");
+                window.location.href = "index.php?ver=atencion";</script>';
     }
-    function eliminar()
+    function borrar($id)
     {
-
+        if ($this->update("solicitud", "estado=false", "id=" . $id)) {
+            echo "<script>alert('¡Operación realizada con éxito!');</script>";
+            return $this->todo2();
+        } else {
+            echo "<script>alert('Ocurrio algo error');</script>";
+            return $this->editar($id);
+        }
     }
-    function preguardar($paquetes, $paciente, $diagnostico, $fecha, $resultados, $analisis,
-        $doctor)
+    function activar($id)
     {
+        if ($this->update("solicitud", "estado=true", "id=" . $id)) {
+            echo "<script>alert('¡Operación realizada con éxito!');</script>";
+            return $this->todo2();
+        } else {
+            echo "<script>alert('Ocurrio algo error');</script>";
+            return $this->editar($id);
+        }
+    }
+    function preguardar(
+        $paquetes,
+        $paciente,
+        $diagnostico,
+        $fecha,
+        $resultados,
+        $analisis,
+        $doctor
+    ) {
         $resultadosimprimibles =
             '<script type="text/javascript" src="js/ir.js" ></script>
         <table><tr><th>Resumen de Atenci&oacute;n</th></tr>
@@ -625,47 +732,62 @@ class admatencion extends bdlaboratorio
         foreach ($paquetes as $paquete) {
             foreach ($this->selectw('*', 'paquete', 'id=' . $paquete) as $datospaquete) {
                 $resultadosimprimibles .= '<tr><td>' . $datospaquete['nombre'] . '</td></tr>';
-                
-                
-                
-               // $precio = ($datospaquete[0]['precio'] / $cantidadresultados[0]['cantidad']) * (sizeof
-               // ($nombres));
-            $preciototal += $datospaquete['precio'];
-            $resultadosimprimibles .= '<tr><td colspan="2">Precio:' . number_format($datospaquete['precio'],
-                2, ".", ",") . ' Bs.</td></tr>';
-                
-                
+                $preciototal += $datospaquete['precio'];
+                $resultadosimprimibles .= '<tr><td colspan="2">Precio:' . number_format(
+                    $datospaquete['precio'],
+                    2,
+                    ".",
+                    ","
+                ) . ' Bs.</td></tr>';
             }
         }
         $resultadosimprimibles .= '<th>Analisis</th>';
         foreach ($analisis as $analis) {
             $nombres = array();
             $ids = array();
-            foreach ($resultados as $resu) {
+            /*foreach ($resultados as $resu) {
                 $todores = $this->selectw('*', 'tiporesultado', 'id=' . $resu);
                 $bandera = true;
                 if ($todores[0]['idanalisis'] == $analis) {
                     $nombres[] = $todores[0]['nombre'];
                     $ids[] = $todores[0]['id'];
                 }
-            }
+            }*/
             $todoanalisis = $this->selectw('*', 'analisisespecifico', 'id=' . $analis);
             $resultadosimprimibles .= '<tr><td>' . $todoanalisis[0]['nombre'] .
                 '</td></tr>';
-            $cantidadresultados = $this->selectw('count(id) cantidad', 'tiporesultado',
-                'idanalisis=' . $analis);
-            $precio = ($todoanalisis[0]['precio'] / $cantidadresultados[0]['cantidad']) * (sizeof
-                ($nombres));
+            $cantidadresultados = $this->selectw(
+                'count(id) cantidad',
+                'tiporesultado',
+                'idanalisis=' . $analis
+            );
+            $precio = ($todoanalisis[0]['precio'] / $cantidadresultados[0]['cantidad']) * (sizeof($nombres));
             $preciototal += $precio;
-            $resultadosimprimibles .= '<tr><td colspan="2">Precio:' . number_format($precio,
-                2, ".", ",") . ' Bs.</td></tr>';
+            $resultadosimprimibles .= '<tr><td colspan="2">Precio:' . number_format(
+                $precio,
+                2,
+                ".",
+                ","
+            ) . ' Bs.</td></tr>';
             $resultadosimprimibles .= '<tr><td><br /></td></tr>';
         }
-        $resultadosimprimibles .= '<tr><th colspan="2">Precio Total:' . number_format($preciototal,
-            1, ".", ",") . '0 Bs.</th></tr><tr><td><br /></td></tr></table>
+        $resultadosimprimibles .= '<tr><th colspan="2">Precio Total:' . number_format(
+            $preciototal,
+            1,
+            ".",
+            ","
+        ) . '0 Bs.</th></tr><tr><td><br /></td></tr></table>
         <form method="GET" name="guardar" action="index.php"><table><tr><td>
-            ' . $this->whoiam('guardar') . $this->llenar($paquetes, $paciente, $diagnostico,
-            $fecha, $resultados, $analisis, $doctor, $preciototal) . '
+            ' . $this->whoiam('guardar') . $this->llenar(
+            $paquetes,
+            $paciente,
+            $diagnostico,
+            $fecha,
+            $resultados,
+            $analisis,
+            $doctor,
+            $preciototal
+        ) . '
             <input type="submit" id="guardar" value="Crear atenci&oacute;n" onclick="return ir(this.id);" /></td>
             <td><input type="submit" id="cotizar" value="Crear cotizaci&oacute;n" onclick="return ir(this.id);" /></td>
             <td><input type="submit" id="atras" value="Volver Atras" onclick="javascript:history.back(1)" /></td></tr></table></form>';
@@ -675,20 +797,31 @@ class admatencion extends bdlaboratorio
     {
         return ' <div  style="height:670px;width="500px;"><embed src="http://localhost/laboratorio0.7/reportes/resultados.php?idsol=1000012" type="application/pdf" width="50%" height="100%"></div> ';
     }
-    function atras($id, $fecha, $diagnostico, $analisisseleccionado)
-    {
-        return $this->formulario($id, $fecha, $diagnostico, $analisisseleccionado,
-            'preguardar');
-    }
-    function llenar($paquetes, $id, $diagnostico, $fecha, $resultados, $analisis, $doctor,
-        $precio)
-    {
+    // function atras($id, $fecha, $diagnostico, $analisisseleccionado)
+    // {
+    //     return $this->formulario($id, $fecha, $diagnostico, $analisisseleccionado,
+    //         'preguardar');
+    // }
+    function llenar(
+        $paquetes,
+        $id,
+        $diagnostico,
+        $fecha,
+        $resultados,
+        $analisis,
+        $doctor,
+        $precio
+    ) {
         $res = '<input type="hidden" name="id" value="' . $id . '">
         <input type="hidden" name="diagnostico" value="' . $diagnostico . '">
         <input type="hidden" name="fecha" value="' . $fecha . '">
         <input type="hidden" name="doctor" value="' . $doctor . '">
-        <input type="hidden" name="precio" value="' . number_format($precio, 1,
-            ".", ",") . '0">';
+        <input type="hidden" name="precio" value="' . number_format(
+            $precio,
+            1,
+            ".",
+            ","
+        ) . '0">';
         foreach ($resultados as $resultado) {
             $res .= '<input type="hidden" name="b[]" value="' . $resultado . '">';
         }
@@ -705,9 +838,11 @@ class admatencion extends bdlaboratorio
                 $this->agregaratencionanalisis($idsolicitud[0]['max'], $i);
                 $aten1 = $this->select('MAX( id ) max', 'atencion');
                 $aten = $this->selectw('idanalisis', 'atencion', 'id=' . $aten1[0]['max']);
-                $resultados = $this->selectw('tiporesultado.id',
+                $resultados = $this->selectw(
+                    'tiporesultado.id',
                     'tiporesultado INNER JOIN analisisespecifico ON tiporesultado.idanalisis = analisisespecifico.id',
-                    'analisisespecifico.id=' . $aten[0]['idanalisis']);
+                    'analisisespecifico.id=' . $aten[0]['idanalisis']
+                );
                 foreach ($resultados as $m) {
                     $this->insert('resultados', 'idatencion, idtiporesultado', $aten1[0]['max'] .
                         ',' . $m['id']);
@@ -717,9 +852,11 @@ class admatencion extends bdlaboratorio
                     $this->agregaratencionanalisis($idsolicitud[0]['max'], $a['id']);
                     $aten2 = $this->select('MAX( id ) max', 'atencion');
                     $aten3 = $this->selectw('idanalisis', 'atencion', 'id=' . $aten2[0]['max']);
-                    $resultados2 = $this->selectw('tiporesultado.id',
+                    $resultados2 = $this->selectw(
+                        'tiporesultado.id',
                         'tiporesultado INNER JOIN analisisespecifico ON tiporesultado.idanalisis = analisisespecifico.id',
-                        'analisisespecifico.id=' . $aten3[0]['idanalisis']);
+                        'analisisespecifico.id=' . $aten3[0]['idanalisis']
+                    );
                     foreach ($resultados2 as $b) {
                         $this->insert('resultados', 'idatencion, idtiporesultado', $aten2[0]['max'] .
                             ',' . $b['id']);
@@ -767,10 +904,12 @@ class admatencion extends bdlaboratorio
     }
     function checkanalisis()
     {
-        return $this->selectw('analisisespecifico.id id, analisisespecifico.precio precio, analisisespecifico.nombre nombrea,
+        return $this->selectw(
+            'analisisespecifico.id id, analisisespecifico.precio precio, analisisespecifico.nombre nombrea,
          categoriaanalisis.nombre nombrec, analisisespecifico.idanalisis idanalisis',
             'analisisespecifico INNER JOIN categoriaanalisis ON analisisespecifico.idcategoria = categoriaanalisis.id',
-            'analisisespecifico.estado = true');
+            'analisisespecifico.estado = true'
+        );
     }
     function aatencionanalisis($idsolicitud, $analisis)
     {
@@ -803,16 +942,25 @@ $pago = isset($_GET["pago"]) ? $_GET["pago"] : '';
 $fecha = isset($_GET["fecha"]) ? $_GET["fecha"] : '';
 $precio = isset($_GET["precio"]) ? $_GET["precio"] : 0.0;
 $paquetes = isset($_GET["paquete"]) ? $_GET["paquete"] : array();
+// MODIFICADO: leer numero de pagina desde GET
+$page = isset($_GET["page"]) ? intval($_GET["page"]) : 1;
 $atencion = new admatencion();
-header('Content-Type: text/html; charset=utf-8');
+
 $contenido = '<div id="content" align="center"><div class="contactof">';
 switch ($accion) {
     case 'nuevo':
         $contenido .= $atencion->nuevo($nombre, $modo);
         break;
     case 'preguardar':
-        $contenido .= $atencion->preguardar($paquetes, $id, $diagnostico, $fecha, $b, $a,
-            $doctor);
+        $contenido .= $atencion->preguardar(
+            $paquetes,
+            $id,
+            $diagnostico,
+            $fecha,
+            $b,
+            $a,
+            $doctor
+        );
         break;
     case 'guardar':
         $contenido .= $atencion->guardar($paquetes, $id, $diagnostico, $fecha, $b, $doctor, $precio);
@@ -820,17 +968,15 @@ switch ($accion) {
     case 'todo':
         $contenido .= $atencion->todo();
         break;
-    case 'todo2':
-        $contenido .= $atencion->todo2();
-        break;
     case 'cotizar':
         $contenido .= $atencion->cotizar($id, $fecha, $diagnostico, $analisisseleccionado);
         break;
     case 'atras':
         $contenido .= $atencion->atras($id, $fecha, $diagnostico, $analisisseleccionado);
         break;
+    // MODIFICADO: se pasa $page a todo2()
     case 'todo2':
-        $contenido .= $atencion->todo2();
+        $contenido .= $atencion->todo2($page);
         break;
     case '':
         $contenido .= $atencion->formulario1();
@@ -838,8 +984,11 @@ switch ($accion) {
     case 'editar':
         $contenido .= $atencion->editar($id);
         break;
-    case 'eliminar':
-        $contenido .= $atencion->eliminar($id);
+    case 'borrar':
+        $contenido .= $atencion->borrar($id);
+        break;
+    case 'activar':
+        $contenido .= $atencion->activar($id);
         break;
     case 'eliminar1':
         $contenido .= $atencion->eleminar1($id);
@@ -853,4 +1002,3 @@ switch ($accion) {
 }
 $contenido .= '</form></div><div><br /></div>';
 echo $contenido;
-?>

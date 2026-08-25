@@ -90,8 +90,9 @@ class motorjs extends bdlaboratorio
         header('Content-Type: text/html; charset=utf-8');
         $idatencion = $buscar;
         $todo = $this->todosolicitud($idatencion);
+        //echo $this->solicitudsql($idatencion,1);
         $accionenv = 'editar';
-
+        
         echo '<form name="detalle" id="formdet" method="POST">
         <table><input type="hidden" id="sol" name="idatencion" value=	"' . $idatencion . '"/>';
 
@@ -100,10 +101,24 @@ class motorjs extends bdlaboratorio
         echo '<tr><th>analisis</th><th>Resultado</th><th>Valor</th><th colspan="2">Parametro</th></tr>';
 
         $resultados = $this->resultados($idatencion);
+        // echo $this->resultados($idatencion, 1);
         for ($i = 0; $i < count($resultados); $i++) {
             echo '<tr><td>' . $resultados[$i]['analisis'] . '</td><td>' . $resultados[$i]['resultado'] . '</td>
             <td><textarea class="dynamic-height" name="a' . $i . '" rows=1 cols=30 >' . htmlspecialchars($resultados[$i]['valor']) . '</textarea>'
-                . $resultados[$i]['unidadmedicion'] . '</td><td>' . $resultados[$i]['parametroinferior'] . ' - ' . $resultados[$i]['parametrosuperior'] . '<input type="hidden" name="b' . $i . '" value="' . $resultados[$i]['id'] . '"></td></tr>';
+                . $resultados[$i]['unidadmedicion'] . '</td><td>' .
+                $resultados[$i]['parametroinferior'] . ' - ' .
+                $resultados[$i]['parametrosuperior'] . '<input type="hidden" name="b' .
+                $i . '" value="' . $resultados[$i]['id'] . '"></td>';
+            if ($resultados[$i]['nota'] != null) {
+                echo '<td> ' . $resultados[$i]['nota'] . '
+                    <input type="checkbox" name="nota' . $i . '"';
+                if ($resultados[$i]['notaresultado'] == 1) {
+                    echo 'checked';
+                }
+                echo '  />
+                    </td>';
+            }
+            echo '</tr>';
         }
         echo '<input type="hidden" value="guardarresultadosautorizar" name="funcion" /><input name="cantidad" type="hidden" value="' . count($resultados) . '">
 		<tr><td></td><td><input  id="corregir" type="submit" value="Guardar" /></td>
@@ -158,7 +173,6 @@ class motorjs extends bdlaboratorio
     {
         return preg_replace('/<br\s*\/?>/i', "\n", $string);
     }
-
 }
 header('Content-Type: text/html; charset=utf-8');
 $motorjs = new motorjs();
@@ -166,4 +180,3 @@ $funcion = isset($_POST['funcion']) ? $_POST['funcion'] : '';
 $buscar = isset($_POST['buscar']) ? $_POST['buscar'] : '';
 $modo = isset($_POST['modo']) ? $_POST['modo'] : '';
 $motorjs->$funcion($buscar, $modo);
-?>

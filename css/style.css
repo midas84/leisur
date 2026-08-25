@@ -1,19 +1,14 @@
 article, aside, audio, canvas, command, datalist, details, embed, figcaption, figure, footer, header, hgroup, keygen, meter, nav, output, progress, section, source, video {
 	display:block;
 }
-button .botone {
-	
-	border: 1px solid #CED5D7;
-	box-shadow:0 0 0 3px #EEF5F7;
-	padding: 8px 16px;
-	border-radius: 20px;
-	font-weight: bold;
-	text-shadow: 1px 1px 0px white;
-	background: #e4f1f6; 
-	background: -moz-linear-gradient(top, #e4f1f6 0%, #cfe6ef 100%);
-	background: -webkit-linear-gradient(top, #e4f1f6 0%,#cfe6ef 100%); 
-}
+div.tituloinferior{
+	font-size: 50px;
+	font-weight: 900;
+    color: #3ab5d6;
+    margin-top: 15px;
+	margin-left: 25px;
 
+}
 mark, rp, rt, ruby, summary, time {
 	display:inline;
 }
@@ -112,6 +107,7 @@ header .right {
 }
 #slogan {
 	display:block;
+	margin:-15px 0 0 0;
 }
 #top_nav {
 	float:right;
@@ -133,8 +129,8 @@ header .right {
 #menu {
 	float:left;
 	padding-top:8px;
-	padding-left:190px;
-	width:700px;
+	padding-left:250px;
+	width:485px;
 }
 #menu li {
 	float:left;
@@ -142,7 +138,7 @@ header .right {
 }
 #menu li a {
 	display:block;
-	font-size:12.5px;
+	font-size:13px;
 	/*text-transform:uppercase;*/
 	color:#fff;
 	text-decoration:none;
@@ -162,7 +158,7 @@ header .right {
 	margin:0;
 }
 #banner {
-	background:url(../images/bg_img2.jpg) 0 0 no-repeat;
+	background:url(../images/bg_img.jpg) 0 0 no-repeat;
 	/*height:211px;*/
 	height:121px;
 	padding:10px 0 0 20px;
@@ -470,11 +466,6 @@ a {
 	background: -moz-linear-gradient(top, #cfe6ef 0%, #edfcff 100%);
 	background: -webkit-linear-gradient(top, #cfe6ef 0%,#edfcff 100%);
 }
-.contacto input[type='submit']:disabled{
-	background: #edfcff; 
-	background: -moz-linear-gradient(top, #edfcff 0%, #cfe6ef 100%);
-	background: -webkit-linear-gradient(top, #edfcff 0%,#cfe6ef 100%); 
-}
 
 #conten{
 	azimuth:center;
@@ -550,11 +541,7 @@ a {
 	background: -moz-linear-gradient(top, #cfe6ef 0%, #edfcff 100%);
 	background: -webkit-linear-gradient(top, #cfe6ef 0%,#edfcff 100%);
 }
-.contactof input[type='submit']:disabled{
-	background: #8ca1ac; 
-	background: -moz-linear-gradient(top, #8ca1ac 0%, #edfcff 100%);
-	background: -webkit-linear-gradient(top, #8ca1ac 0%,#edfcff 100%);
-}
+
 /*estilos tablas formularios*/
 
 #tablaf1{
@@ -599,7 +586,7 @@ a {
     padding: 0;
     /* la altura y su ancho depender�n de los textos */
     height: 40px; 
-    width: 490px;
+    width: 470px;
     /* el color de fondo */
     background: #555;
     background: -moz-linear-gradient(#555,#222);
@@ -713,7 +700,7 @@ a {
 /*control de usuarios*/
 #control{ 
 padding-top: 3px;
-padding-left: -50px;
+padding-left: 630px;
 	font:14px Arial, Helvetica, sans-serif;
 	color:#ffffff;
 }

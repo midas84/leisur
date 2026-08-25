@@ -40,24 +40,6 @@ $html.= '</body>';
 
 $h['compress']=1;
 $h['Attachment']=0;
-//$html = $s;//"<img src='http://10.10.10/laboratorio/reportes/barcodegen/test.php' /> <table><tr><td>jgjghjhg</td><td>ghjghjghjgh</td></tr></table>";
-//file_get_contents('http://localhost/laboratorio/barcodegen/test.php');
-//Obtenemos el c�digo html de la p�gina web que nos interesa
-/* $dompdf = new DOMPDF();
-// Creamos una instancia a la clase
-$hoja = array(
-    0.0,
-    0.0,
-    400.0,
-    550.2);
-$dompdf->set_paper($hoja);
-$dompdf->load_html($html);
-$dompdf->render();
 
-$dompdf->stream("ejemplo.pdf", $h);
-exit();
-
-
-$pdf->Output();*/
 echo $html;
 ?>

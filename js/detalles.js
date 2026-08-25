@@ -91,6 +91,7 @@ $(function () {
       .css("background-color", "green")
       .text("autorizado");
     $("#imprimir").prop("disabled", false);
+    $("#sobre").prop("disabled", false);
 
     return false;
   });
@@ -102,14 +103,22 @@ $(function () {
         .css("background-color", "red")
         .text("No autorizado");
       $("#imprimir").prop("disabled", true);
+      $("#sobre").prop("disabled", true);
       $("input#autorizar").prop("checked", false);
       $("input#enviarauto").attr("disabled", true);
     });
     return false;
   });
   $("#imprimir").live("click", () => {
+    
     window.open(
-      "reportes/resultados.php?idsol=" + $("input#sol").attr("value"),
+      "reportes/resultados.php?idsol=" + $("input#sol").attr("value")+"&firma="+document.getElementById("firma").value,
+      "_blank"
+    );
+  });
+  $("#sobre").live("click", () => {
+    window.open(
+      "reportes/sobre.php?idsol=" + $("input#sol").attr("value"),
       "_blank"
     );
   });

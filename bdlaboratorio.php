@@ -10,7 +10,7 @@ class bdlaboratorio
     function __construct()
     {
         $this->host = 'db';
-        $this->db   = 'labo2';
+        $this->db   = 'lab2';
         $this->user = 'root';
         $this->pass = '1234';
 
@@ -55,91 +55,93 @@ class bdlaboratorio
     }
 
     // Equivalente a select simple
-    function select($select, $from)
+    function select($select, $from, $mostrar = 0)
     {
         $sql = 'SELECT ' . $select . ' FROM ' . $from;
-        $rs = $this->_consulta($sql);
-        if ($rs && mysqli_num_rows($rs) > 0) {
-            $row = $this->mysql_fetch_all($rs);
+
+        if ($mostrar) {
+            echo $sql;
         } else {
-            $row = array();
+            $rs = $this->_consulta($sql);
+            if ($rs && mysqli_num_rows($rs) > 0) {
+                $row = $this->mysql_fetch_all($rs);
+            } else {
+                $row = array();
+            }
         }
         return $row;
     }
 
-    // Solo devuelve SQL
-    function showselect($select, $from)
-    {
-        $sql = 'SELECT ' . $select . ' FROM ' . $from;
-        return $sql;
-    }
 
     // Select con WHERE
-    function selectw($select, $from, $where)
+    function selectw($select, $from, $where, $mostrar = 0)
     {
         $sql = 'SELECT ' . $select . ' FROM ' . $from . ' WHERE ' . $where;
-        $rs = $this->_consulta($sql);
-
-        if ($rs && mysqli_num_rows($rs) > 0) {
-            $row = $this->mysql_fetch_all($rs);
+        if ($mostrar) {
+            echo $sql;
         } else {
-            $row = array();
+            $rs = $this->_consulta($sql);
+            if ($rs && mysqli_num_rows($rs) > 0) {
+                $row = $this->mysql_fetch_all($rs);
+            } else {
+                $row = array();
+            }
         }
-
         return $row;
     }
-    function showselectw($select, $from, $where)
-    {
-        $sql = 'select ' . $select . ' from ' . $from . ' where ' . $where;
-        echo $sql;
-    }
-    function update($update, $set, $where)
-{
-    $sql = 'UPDATE ' . $update . ' SET ' . $set . ', fechamodificacion=NOW() WHERE ' . $where;
-    $rs = $this->_consulta($sql);
 
-    $my_error = mysqli_error($this->conexion);
-    if (!empty($my_error)) {
-        return false;
-    } else {
-        return true;
+    function update($update, $set, $where, $mostrarsql = 0)
+    {
+        $sql = 'UPDATE ' . $update . ' SET ' . $set . ', fechamodificacion=NOW() WHERE ' . $where;
+        if ($mostrarsql) {
+            echo $sql;
+        } else {
+            $rs = $this->_consulta($sql);
+            $my_error = mysqli_error($this->conexion);
+            if (!empty($my_error)) {
+                // ✅ Agrega esto temporalmente
+                echo "Error SQL: " . $my_error . "<br>Query: " . $sql;
+                return false;
+            } else {
+                return true;
+            }
+        }
     }
-}
     function update1($update, $set, $where)
     {
         echo $sql = 'UPDATE ' . $update . ' SET ' . $set .
             ', fechamodificacion=now() WHERE ' . $where;
-
     }
-    function insert($into, $campos, $values)
-{
-    $sql = "INSERT INTO " . $into . " (" . $campos . ") VALUES (" . $values . ")";
-    $rs = $this->_consulta($sql);
-
-    if (!$rs) {
-        // mysqli_error necesita la conexión, que supongo tienes en $this->conexion
-        $my_error = mysqli_error($this->conexion);
-        if (!empty($my_error)) {
-            return false;
-        }
-    }
-
-    return true;
-}
-    function insert1($into, $campos, $values)
+    function insert($into, $campos, $values, $mostrarsql = 0)
     {
-        return $sql = "insert into " . $into . " (" . $campos . ") values (" . $values .
+        if ($mostrarsql) {
+            echo $sql = "insert into " . $into . " (" . $campos . ") values (" . $values .
             ")";
+        } else {
 
+            $sql = "INSERT INTO " . $into . " (" . $campos . ") VALUES (" . $values . ")";
+            $rs = $this->_consulta($sql);
+
+            if (!$rs) {
+                // mysqli_error necesita la conexión, que supongo tienes en $this->conexion
+                $my_error = mysqli_error($this->conexion);
+                if (!empty($my_error)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
+    
     function login($login, $pass)
-{
-    $sql = "select personal.nombres nombre, personal.idseguridad idseguridad from personal inner join seguridad on personal.idseguridad=seguridad.id where (personal.usuario='" .
-        $login . "')and(personal.clave='" . $pass . "')and(personal.estado=true)";
-    $rs = $this->_consulta($sql);
-    $row = $this->mysql_fetch_all($rs);
-    return $row;
-}
+    {
+        $sql = "select personal.nombres nombre, personal.idseguridad idseguridad from personal inner join seguridad on personal.idseguridad=seguridad.id where (personal.usuario='" .
+            $login . "')and(personal.clave='" . $pass . "')and(personal.estado=true)";
+        $rs = $this->_consulta($sql);
+        $row = $this->mysql_fetch_all($rs);
+        return $row;
+    }
 
     function buscarpaciente($nombre, $apellido)
     {
@@ -332,7 +334,6 @@ class bdlaboratorio
         $campos = 'idsolicitud,  idanalisis';
         $values = $idsolicitud . "," . $analisis;
         return $this->insert($into, $campos, $values);
-
     }
     function agregarpago($idsolicitud, $pago)
     {
@@ -382,7 +383,6 @@ class bdlaboratorio
                     }
                 }
             }
-
         }
         /*foreach ($muestras as $o){
         if ($o!=''){
@@ -421,8 +421,7 @@ class bdlaboratorio
             INNER JOIN analisisespecifico ON atencion.idanalisis = analisisespecifico.id 
             INNER JOIN categoriaanalisis ON categoriaanalisis.id = analisisespecifico.idcategoria
 			INNER JOIN doctor ON doctor.id = solicitud.iddoctor',
-            '(solicitud.id="' . $idsol . '") AND (solicitud.estado = true)',
-            'categoriaanalisis.nombre'
+            '(solicitud.id="' . $idsol . '") AND (solicitud.estado = true)'
         );
     }
     //formulario categoria
@@ -485,7 +484,7 @@ class bdlaboratorio
             "resultados.id resultadosid, tiporesultado.nombre nombreresultado, analisisespecifico.nombre nombreanalisis, tiporesultado.unidadmedicion unidadmedicion, resultados.valor valor",
             "atencion inner join tiporesultado on atencion.idanalisis=tiporesultado.idanalisis inner join analisisespecifico on analisisespecifico.id=atencion.idanalisis inner join resultados on resultados.idtiporesultado=tiporesultado.id ",
             "((atencion.idsolicitud=" . $sol[0] . ") and (atencion.fechasolicitud='" . $sol[1] .
-            "') and (atencion.estado=true))"
+                "') and (atencion.estado=true))"
         );
     }
     function nuevoresultado($resultadoa, $solicitud)
@@ -499,13 +498,23 @@ class bdlaboratorio
         }
         return $idatencion; //'echo';
     }
-    function resultados($idatencion)
+    function resultados($idatencion, $imprimirsql = 0)
     {
-        return $this->selectw(
-            ' categoriaanalisis.nombre categoria, tiporesultado.nombre resultado, analisisespecifico.nombre analisis, resultados.valor, resultados.id, tiporesultado.unidadmedicion, tiporesultado.parametroinferior, tiporesultado.parametrosuperior, tiporesultado.filacompleta',
-            'resultados INNER JOIN atencion ON resultados.idatencion = atencion.id INNER JOIN analisisespecifico ON atencion.idanalisis = analisisespecifico.id inner join tiporesultado on tiporesultado.id = resultados.idtiporesultado inner join categoriaanalisis on categoriaanalisis.id=analisisespecifico.idcategoria',
-            'atencion.idsolicitud=' . $idatencion
-        );
+
+        if ($imprimirsql) {
+            return $this->selectw(
+                ' resultados.nota notaresultado, tiporesultado.nota nota, categoriaanalisis.nombre categoria, tiporesultado.nombre resultado, analisisespecifico.nombre analisis, resultados.valor, resultados.id, tiporesultado.unidadmedicion, tiporesultado.parametroinferior, tiporesultado.parametrosuperior, tiporesultado.filacompleta',
+                'resultados INNER JOIN atencion ON resultados.idatencion = atencion.id INNER JOIN analisisespecifico ON atencion.idanalisis = analisisespecifico.id inner join tiporesultado on tiporesultado.id = resultados.idtiporesultado inner join categoriaanalisis on categoriaanalisis.id=analisisespecifico.idcategoria',
+                '((atencion.idsolicitud=' . $idatencion . ') and (resultados.estado=true))',
+                1
+            );
+        } else {
+            return $this->selectw(
+                ' resultados.nota notaresultado, tiporesultado.nota nota, categoriaanalisis.nombre categoria, tiporesultado.nombre resultado, analisisespecifico.nombre analisis, resultados.valor, resultados.id, tiporesultado.unidadmedicion, tiporesultado.parametroinferior, tiporesultado.parametrosuperior, tiporesultado.filacompleta',
+                'resultados INNER JOIN atencion ON resultados.idatencion = atencion.id INNER JOIN analisisespecifico ON atencion.idanalisis = analisisespecifico.id inner join tiporesultado on tiporesultado.id = resultados.idtiporesultado inner join categoriaanalisis on categoriaanalisis.id=analisisespecifico.idcategoria',
+                '((atencion.idsolicitud=' . $idatencion . ') and (resultados.estado=true))'
+            );
+        }
     }
     function modificarres($datos, $ids)
     {
@@ -520,17 +529,15 @@ class bdlaboratorio
         $this->desautorizar($idatencion[0]['idsolicitud']);
     }
     function autorizar($idsolicitud)
-    { 
+    {
         $this->update('solicitud', 'autorizado=1', 'id=' . $idsolicitud);
     }
     function desautorizar($idsolicitud)
-    {  
+    {
         $this->update('solicitud', 'autorizado=0', 'id=' . $idsolicitud);
     }
     function seleccionardoctor($doctor1)
     {
         return $this->selectw('id, nombre', 'doctor', "nombre='" . $doctor1 . "'");
     }
-
 }
-?>

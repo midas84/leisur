@@ -1,0 +1,45 @@
+.col1, .col2, .col3, .cols {
+	float:left;
+}
+.col1 {
+	width:246px;
+	background:#f4f4f4;
+	height:100%;
+}
+.col2 {
+	width:644px;
+}
+.cols {
+	width:280px;
+}
+#page1 h1 {
+	padding-top:33px;
+}
+#page1 #top_nav {
+	padding-top:33px;
+}
+#page1 #menu {
+	padding-top:19px;
+}
+#page1 header {
+	height:90px;
+}
+#page1 #banner {
+	background:url(../images/bg_img.jpg) 0 0 no-repeat;
+	height:91px;
+	padding:10px 0 0 20px;
+}
+#page2 .cols {
+	width:249px;
+}
+#page3 .cols {
+	width:249px;
+}
+#page5 .cols {
+	width:80px;
+}
+#control{
+	position:absolute;
+	top: 100px;  
+	left: 900px; 
+}
